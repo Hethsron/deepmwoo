@@ -18,7 +18,7 @@ If you are reporting a bug, please include:
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/Hethsron/deepmwoo/issues.
+The best way to send feedback is to file an issue at [`Issues`](https://github.com/Hethsron/deepmwoo/issues).
 
 If you are proposing a feature:
 

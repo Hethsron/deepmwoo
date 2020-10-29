@@ -2,8 +2,6 @@
 
 ## Welcome to **DeepMwoo**, Mwoo facial recognition solution !
 
-
-
 ## Features
 
 *   Real-Time face tracking
