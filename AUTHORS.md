@@ -1,6 +1,6 @@
 # Authors
 
-*   [`Hethsron Jedaël BOUEYA`](mailto:hetshron-jeadel.boueya@uha.fr
+*   [`Hethsron Jedaël BOUEYA`](mailto:hetshron-jeadel.boueya@uha.fr)
 *   [`Yassine BENOMAR`](mailto:yassine.benomar@uha.fr)
 
 ## Thanks
