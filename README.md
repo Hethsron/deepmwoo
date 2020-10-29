@@ -26,4 +26,4 @@ DeepMwoo is designed too have fairly minimal requirements to build and use with 
 
 ## Contributing change
 
-Please read the [`CONTRIBUTING`](CONTRIBUTING) for details on how to contribute to this project.
+Please read the [`CONTRIBUTING.rst`](CONTRIBUTING.rst) for details on how to contribute to this project.
