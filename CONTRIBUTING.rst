@@ -1,4 +1,5 @@
 .. highlight:: shell
+.. README.md: README.md
 
 ============
 Contributing
