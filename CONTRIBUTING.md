@@ -8,7 +8,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at [`https://github.com/Hethsron/deepmwoo/issues`](Issues).
+Report bugs at [`Issues`](https://github.com/Hethsron/deepmwoo/issues).
 
 If you are reporting a bug, please include:
 
