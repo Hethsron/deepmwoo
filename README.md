@@ -20,7 +20,7 @@ DeepMwoo has been used on a variety of plateforms:
 
 ## Requirements
 
-DeepMwoo is designed too have fairly minimal requirements to build and use with your projects, but there are somes. If you notice any problems on your platform, please notify [hetshron-jeadel.boueya@uha.fr](). Patches and fixing them for welcome !
+DeepMwoo is designed too have fairly minimal requirements to build and use with your projects, but there are somes. If you notice any problems on your platform, please notify [`Hethsron Jedaël BOUEYA`](hetshron-jeadel.boueya@uha.fr) or [`Yassine Benomar`](yassine.benomar@uha.fr). Patches and fixing them for welcome !
 
 ## Contributing change
 
