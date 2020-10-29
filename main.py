@@ -8,7 +8,7 @@
     @author     BOUEYA Hethsron Jedaël <hethsron-jedael.boueya@uha.fr>
                 BENOMAR Yassine <yassine.benomar@uha.fr>
     
-    @version    0.1
+    @version    0.0.1
     @date       October, 23th 2020
     
     @note       For this program, we recommand to use the existing virtual
@@ -35,7 +35,7 @@
     @remark
 
     @copyright  GPLv3+ : GNU GPL version 3 or later
-                Licencied Material - Property of STIMULACTIV
+                Licencied Material - Property of Stimul’Activ®
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
@@ -48,21 +48,25 @@ def main():
         @brief  Parse and interpret options.
     """
     try:
-        opts, args = getopt(sys.argv[1:], "ht", ["help", "train"])
+        opts, args = getopt(sys.argv[1:], "htv", ["help", "train", "version"])
     except GetoptError as err:
         print(err)
+
+        # Unsucessful termination occurs when parsing command-line options
         sys.exit(2)
 
     for o, a in opts:
         if o in ("-h", "--help"):
             print("Help")
-            sys.exit()
         elif o in ("-t", "--train"):
             print("Train")
-            sys.exit()
+        elif o in ("-v", "--version"):
+            pass
         else:
             assert False, "Unhandled option"
 
+    # No problems occured (successful termination)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
