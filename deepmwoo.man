@@ -1,6 +1,6 @@
 .\" Manpage for DeepMwoo.
 .\" Contact hethsron-jedael.boueya@uha.fr to correct errors or typos.
-.TH man 8 "23th October 2020" "0.0.1" "DeepMwoo man page"
+.TH DEEPMWOO 8 "23th October 2020" "0.0.1" "User Commands"
 .SH NAME
 .B DeepMwoo
 \- starting facial recognition 

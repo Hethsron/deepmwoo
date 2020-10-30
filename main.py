@@ -97,7 +97,7 @@ class Main(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'htv', ['help', 'train', 'version'])
+            opts, args = getopt(sys.argv[1:], 'dhipuv', ['device', 'help', 'image', 'player', 'url', 'version'])
         except GetoptError as err:
             print(err)
 
@@ -105,10 +105,16 @@ class Main(object):
             sys.exit(2)
 
         for o, a in opts:
-            if o in ('-h', '--help'):
+            if o in ('-d', '--device'):
+                pass
+            elif o in ('-h', '--help'):
                 Main.usage()
-            elif o in ('-t', '--train'):
-                print("Train")
+            elif o in ('-i', '--image'):
+                pass
+            elif o in ('-p', '--player'):
+                pass
+            elif o in ('-u', '--url'):
+                pass
             elif o in ('-v', '--version'):
                 Main.version()
             else:
