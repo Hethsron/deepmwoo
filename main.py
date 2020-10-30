@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2020  Hethsron Jedaël BOUEYA
+# Copyright © 2020  Hethsron Jedaël BOUEYA
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,7 +55,8 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-import sys
+import sys, os
+from art import tprint
 from getopt import getopt, GetoptError
 
 class Main(object):
@@ -70,8 +71,8 @@ class Main(object):
             @fn     version
             @brief  Display information about `deepmwoo` release
         """
-        print('DeepMwoo')
-        print('Version 0.0.1 released on October 23, 2020')
+        tprint('DeepMwoo', font='bulbhead')
+        print('Version 0.0.1')
         print('License GPLv3+ : GNU GPL version 3 or later')
         print('Licencied Material - Property of Stimul’Activ®')
         print('© 2020 ENSISA (UHA) - All rights reserved.')
@@ -83,8 +84,12 @@ class Main(object):
             @brief  Display most of command line options that you can use
                     with `deepmwoo`
         """
-        pass
-    
+        if sys.platform in ('win32', 'win64'):
+            pass
+        else:
+            os.system('clear')
+            os.system('groff -Tascii -man deepmwoo.man')
+        
     @staticmethod
     def main():
         """!
@@ -92,7 +97,7 @@ class Main(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], "htv", ["help", "train", "version"])
+            opts, args = getopt(sys.argv[1:], 'htv', ['help', 'train', 'version'])
         except GetoptError as err:
             print(err)
 
@@ -100,14 +105,14 @@ class Main(object):
             sys.exit(2)
 
         for o, a in opts:
-            if o in ("-h", "--help"):
-                usage()
-            elif o in ("-t", "--train"):
+            if o in ('-h', '--help'):
+                Main.usage()
+            elif o in ('-t', '--train'):
                 print("Train")
-            elif o in ("-v", "--version"):
-                version()
+            elif o in ('-v', '--version'):
+                Main.version()
             else:
-                assert False, "Unhandled option"
+                assert False, 'Unhandled option'
 
         # No problems occured (successful termination)
         sys.exit(0)
