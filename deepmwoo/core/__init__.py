@@ -23,7 +23,7 @@
                 BENOMAR Yassine <yassine.benomar@uha.fr>
     
     @version    0.0.1
-    @date       October, 23th 2020
+    @date       October 23th, 2020
 
     @copyright  GPLv3+ : GNU GPL version 3 or later
                 Licencied Material - Property of Stimul’Activ®

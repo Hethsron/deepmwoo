@@ -25,7 +25,7 @@
                 BENOMAR Yassine <yassine.benomar@uha.fr>
     
     @version    0.0.1
-    @date       October, 23th 2020
+    @date       October 23th, 2020
     
     @note       For this program, we recommand to use the existing virtual
                 environment that allows you to avoid installing Python
@@ -58,31 +58,59 @@
 import sys
 from getopt import getopt, GetoptError
 
-def main():
+class Main(object):
     """!
-        @fn     main
-        @brief  Parse and interpret options.
+        @class      Main
+        @brief      Define useful static method to run `deepmwoo`
     """
-    try:
-        opts, args = getopt(sys.argv[1:], "htv", ["help", "train", "version"])
-    except GetoptError as err:
-        print(err)
 
-        # Unsucessful termination occurs when parsing command-line options
-        sys.exit(2)
+    @staticmethod
+    def version():
+        """!
+            @fn     version
+            @brief  Display information about `deepmwoo` release
+        """
+        print('DeepMwoo')
+        print('Version 0.0.1 released on October 23, 2020')
+        print('License GPLv3+ : GNU GPL version 3 or later')
+        print('Licencied Material - Property of Stimul’Activ®')
+        print('© 2020 ENSISA (UHA) - All rights reserved.')
 
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            print("Help")
-        elif o in ("-t", "--train"):
-            print("Train")
-        elif o in ("-v", "--version"):
-            pass
-        else:
-            assert False, "Unhandled option"
+    @staticmethod
+    def usage():
+        """!
+            @fn     usage
+            @brief  Display most of command line options that you can use
+                    with `deepmwoo`
+        """
+        pass
+    
+    @staticmethod
+    def main():
+        """!
+            @fn     main
+            @brief  Parse and interpret options.
+        """
+        try:
+            opts, args = getopt(sys.argv[1:], "htv", ["help", "train", "version"])
+        except GetoptError as err:
+            print(err)
 
-    # No problems occured (successful termination)
-    sys.exit(0)
+            # Unsucessful termination occurs when parsing command-line options
+            sys.exit(2)
+
+        for o, a in opts:
+            if o in ("-h", "--help"):
+                usage()
+            elif o in ("-t", "--train"):
+                print("Train")
+            elif o in ("-v", "--version"):
+                version()
+            else:
+                assert False, "Unhandled option"
+
+        # No problems occured (successful termination)
+        sys.exit(0)
 
 if __name__ == '__main__':
-    main()
+    Main.main()

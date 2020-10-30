@@ -25,7 +25,7 @@
                 BENOMAR Yassine <yassine.benomar@uha.fr>
     
     @version    0.0.1
-    @date       October, 23th 2020
+    @date       October 23th, 2020
     
     @note       For this program, we recommand to use the existing virtual
                 environment that allows you to avoid installing Python
