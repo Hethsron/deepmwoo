@@ -68,7 +68,7 @@ For developement, before running the application, you need to create your own vi
 
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
-    ```text
+    ```
         **/__pycache__
         **/[Bb]in
         **/[Dd]ocs
@@ -83,7 +83,7 @@ For development, before committing the changes on the `master` branch, it is nec
 
 To commit your changes and push it on `master` branch to GitHub, it is necessary to run the following commands :
 
-    ```console
+    ```
         $ git add .
         $ git commit -m "Your detailed description of your changes"
         $ git push -u origin master
