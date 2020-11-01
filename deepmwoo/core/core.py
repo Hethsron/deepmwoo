@@ -55,3 +55,60 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
+from mtcnn.mtcnn import MTCNN
+from deepmwoo.core.shapes import cv4, cv2
+
+class hub(object):
+    """!
+        @class      hub
+        @brief      Define useful static methods which implements various
+                    techniques such as :
+                        - Face detection and tracking, for locating faces in images
+                        and video sequences
+                        - Face recognition for identifying unknown people using stored
+                        database of known faces
+    """
+
+    @staticmethod
+    def VideoTracking():
+        """!
+        """
+        # Initialize the MTCNN 
+        detector = MTCNN()
+
+        # Create a VideoCapture object
+        cap = cv2.VideoCapture(0)
+
+        # Check whether VideoCapture is initialized or not
+        while (cap.isOpened()):
+            ret, frame = cap.read()
+
+            # Check if frame is read correctly
+            if ret is True:
+                # Detect list of faces
+                faces = detector.detect_faces(frame)
+
+                count = 0
+                for face in faces:
+                    if face['box'] is not None:
+                        x, y, width, height = face['box']
+                        count += 1
+
+                        try:
+                            frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+                        except IndexError as err:
+                            print(err)
+                    else:
+                        pass
+                
+                print(count)
+                cv2.imshow("DeepMwoo",frame)
+                
+                if cv2.waitKey(30) & 0xFF == ord('q'):
+                        break
+            else:
+                break
+        
+        # Release everything if job is finished
+        cap.release()
+        cv2.destroyAllWindows()

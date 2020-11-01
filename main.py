@@ -57,19 +57,20 @@
 
 import sys, os
 from art import tprint
+from deepmwoo.core.core import hub
 from getopt import getopt, GetoptError
 
-class Main(object):
+class mwoo(object):
     """!
-        @class      Main
-        @brief      Define useful static method to run `deepmwoo`
+        @class      mwoo
+        @brief      Define useful static methods to run `deepmwoo`.
     """
 
     @staticmethod
     def version():
         """!
             @fn     version
-            @brief  Display information about `deepmwoo` release
+            @brief  Display information about `deepmwoo` release.
         """
         tprint('DeepMwoo', font='bulbhead')
         print('Version 0.0.1')
@@ -82,7 +83,7 @@ class Main(object):
         """!
             @fn     usage
             @brief  Display most of command line options that you can use
-                    with `deepmwoo`
+                    with `deepmwoo`.
         """
         if sys.platform in ('win32', 'win64'):
             pass
@@ -106,9 +107,9 @@ class Main(object):
 
         for o, a in opts:
             if o in ('-d', '--device'):
-                pass
+                hub.VideoTracking()
             elif o in ('-h', '--help'):
-                Main.usage()
+                mwoo.usage()
             elif o in ('-i', '--image'):
                 pass
             elif o in ('-p', '--player'):
@@ -116,7 +117,7 @@ class Main(object):
             elif o in ('-u', '--url'):
                 pass
             elif o in ('-v', '--version'):
-                Main.version()
+                mwoo.version()
             else:
                 assert False, 'Unhandled option'
 
@@ -124,4 +125,4 @@ class Main(object):
         sys.exit(0)
 
 if __name__ == '__main__':
-    Main.main()
+    mwoo.main()
