@@ -68,18 +68,16 @@ For developement, before running the application, you need to create your own vi
 
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
-    ```
-        **/__pycache__
-        **/[Bb]in
-        **/[Dd]ocs
-        **/[Ii]nclude
-        **/[Ll]ib
-        **/[Ll]ib64
-        **/[Ss]hare
-        **/[Ss]cripts
-        **/pyvenv.cfg
-        **/.venv
-    ```
+    **/__pycache__
+    **/[Bb]in
+    **/[Dd]ocs
+    **/[Ii]nclude
+    **/[Ll]ib
+    **/[Ll]ib64
+    **/[Ss]hare
+    **/[Ss]cripts
+    **/pyvenv.cfg
+    **/.venv
 
 To commit your changes and push it on `master` branch to GitHub, it is necessary to run the following commands :
 
