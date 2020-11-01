@@ -35,21 +35,21 @@ Ready to contribute? Here's how to set up `deepmwoo` for local development.
 2. Clone your fork locally::
 
     ```console
-    $ git clone git@github.com:your_name_here/deepmwoo.git
+        $ git clone git@github.com:your_name_here/deepmwoo.git
     ```
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
     ```console
-    $ mkvirtualenv deepmwoo
-    $ cd deepmwoo/
-    $ python setup.py develop
+        $ mkvirtualenv deepmwoo
+        $ cd deepmwoo/
+        $ python setup.py develop
     ```
 
 4. Create a branch for local development::
 
     ```console
-    $ git checkout -b name-of-your-bugfix-or-feature
+        $ git checkout -b name-of-your-bugfix-or-feature
     ```
 
    Now you can make your changes locally.
@@ -57,9 +57,9 @@ Ready to contribute? Here's how to set up `deepmwoo` for local development.
 5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
 
     ```console
-    $ flake8 deepmwoo tests
-    $ python setup.py test or py.test
-    $ tox
+        $ flake8 deepmwoo tests
+        $ python setup.py test or py.test
+        $ tox
     ```
 
    To get flake8 and tox, just pip install them into your virtualenv.
@@ -67,9 +67,9 @@ Ready to contribute? Here's how to set up `deepmwoo` for local development.
 6. Commit your changes and push your branch to GitHub::
 
     ```console
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+        $ git add .
+        $ git commit -m "Your detailed description of your changes."
+        $ git push origin name-of-your-bugfix-or-feature
     ```
 
 7. Submit a pull request through the GitHub website.
