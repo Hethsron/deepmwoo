@@ -29,13 +29,13 @@ For developement, before running the application, you need to create your own vi
 
 1. Clone the `deepmwoo` repo locally :
 
-    ```bash
+    ```console
         $ git clone https://github.com/Hethsron/deepmwoo.git
     ```
 
 2. Create your virtual environment locally :
 
-    ```bash
+    ```console
         $ cd deepmwoo
         $ python3 -m venv env
     ```
@@ -44,31 +44,31 @@ For developement, before running the application, you need to create your own vi
 
     *  On macOS X or GNU/linux, run :
 
-        ```bash
+        ```console
             $ source env/bin/activate
         ```
 
     *   On Windows, run :
 
-        ```bash
+        ```console
            >> .\env\Scripts\activate
         ```
 
 4. Install requirements :
 
-    ```bash
+    ```console
         $ pip3 install -r requirements
     ```
 
 5. Run the application
 
-    ```bash
+    ```console
         $ python3 main.py --help
     ```
 
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
-    ```bash
+    ```.gitignore
         **/__pycache__
         **/[Bb]in
         **/[Dd]ocs
@@ -83,7 +83,8 @@ For development, before committing the changes on the `master` branch, it is nec
 
 To commit your changes and push it on `master` branch to GitHub, it is necessary to run the following commands :
 
-    ```bash
+    ```console
+        $ cd deepmwoo
         $ git add .
         $ git commit -m "Your detailed description of your changes"
         $ git push -u origin master
