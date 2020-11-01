@@ -60,9 +60,15 @@ For developement, before running the application, you need to create your own vi
         $ pip3 install -r requirements
     ```
 
+5. Run the application
+
+    ```console
+        $ python3 main.py --help
+    ```
+
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
-    ```.gitignore
+    ```text
         **/__pycache__
         **/[Bb]in
         **/[Dd]ocs
