@@ -83,10 +83,8 @@ For development, before committing the changes on the `master` branch, it is nec
 
 To commit your changes and push it on `master` branch to GitHub, it is necessary to run the following commands :
 
-    ```
+    ```console
         $ git add .
-        $ git commit -m "Your detailed description of your changes"
-        $ git push -u origin master
     ```
 
 ## Contributing change
