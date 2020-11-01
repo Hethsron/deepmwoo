@@ -13,7 +13,7 @@
 
 DeepMwoo has been used on a variety of plateforms:
 
-*   Linux
+*   GNU/Linux
 *   macOS X
 *   Windows
 *   Raspberry Pi 3+
@@ -42,7 +42,7 @@ For developement, before running the application, you need to create your own vi
 
 3. Activate your virtual environment :
 
-    *  On macOS X or GNU/linux, run :
+    *  On macOS X, GNU/Linux or Raspberry Pi 3+, run :
 
         ```console
             $ source env/bin/activate
