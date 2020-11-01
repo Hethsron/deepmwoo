@@ -76,6 +76,7 @@ For development, before committing the changes on the `master` branch, it is nec
     **/[Ll]ib64
     **/[Ss]hare
     **/[Ss]cripts
+    **/env
     **/pyvenv.cfg
     **/.venv
 
