@@ -65,6 +65,7 @@ class cv4(IntEnum):
         @brief      Define useful static methods to draw geometric shapes on any image
     """
 
+    # Define radius default values
     RADIUS_AA = 1
     RADIUS_BB = 2
     RADIUS_CC = 3
@@ -101,7 +102,7 @@ class cv4(IntEnum):
             @return         
         """
 
-        #  Define corners:
+        #  Define corners
         #  p1 - p2
         #  |     |q
         #  p4 - p3

@@ -55,7 +55,7 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-import sys, os
+import os, re, sys
 from art import tprint
 from deepmwoo.core.core import hub
 from getopt import getopt, GetoptError
@@ -67,7 +67,7 @@ class mwoo(object):
     """
 
     @staticmethod
-    def version():
+    def __version__():
         """!
             @fn     version
             @brief  Display information about `deepmwoo` release.
@@ -79,7 +79,7 @@ class mwoo(object):
         print('© 2020 ENSISA (UHA) - All rights reserved.')
 
     @staticmethod
-    def usage():
+    def __usage__():
         """!
             @fn     usage
             @brief  Display most of command line options that you can use
@@ -98,7 +98,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'dhipuv', ['device', 'help', 'image', 'player', 'url', 'version'])
+            opts, args = getopt(sys.argv[1:], 'd:hipuv', ['device=', 'help', 'image', 'player', 'url', 'version'])
         except GetoptError as err:
             print(err)
 
@@ -107,9 +107,15 @@ class mwoo(object):
 
         for o, a in opts:
             if o in ('-d', '--device'):
-                hub.VideoTracking()
+                # Check if pattern matches with given argument
+                if re.compile('^(VID[0-2])|(vid[0-2])$').match(a):
+                    # Built-in tracking
+                    hub.VideoTracking(int(re.findall(r'\d+', a)[0]))
+                else:
+                    # Built-in assert statement to find errors
+                    assert False, 'Invalid argument'
             elif o in ('-h', '--help'):
-                mwoo.usage()
+                mwoo.__usage__()
             elif o in ('-i', '--image'):
                 pass
             elif o in ('-p', '--player'):
@@ -117,8 +123,9 @@ class mwoo(object):
             elif o in ('-u', '--url'):
                 pass
             elif o in ('-v', '--version'):
-                mwoo.version()
+                mwoo.__version__()
             else:
+                # Built-in assert statement to find errors
                 assert False, 'Unhandled option'
 
         # No problems occured (successful termination)

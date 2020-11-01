@@ -70,14 +70,16 @@ class hub(object):
     """
 
     @staticmethod
-    def VideoTracking():
+    def VideoTracking(video_source = None):
         """!
+            @fn     VideoTracking
+            @brief  
         """
         # Initialize the MTCNN 
         detector = MTCNN()
 
         # Create a VideoCapture object
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(video_source)
 
         # Check whether VideoCapture is initialized or not
         while (cap.isOpened()):
