@@ -68,7 +68,7 @@ For developement, before running the application, you need to create your own vi
 
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
-    ```console
+    ```sh
         **/__pycache__
         **/[Bb]in
         **/[Dd]ocs
