@@ -92,11 +92,14 @@ class hub(object):
             if ret is True:
                 # Detect list of faces
                 faces = detector.detect_faces(frame)
-
+                
+                # Initialize counter
                 count = 0
                 for face in faces:
                     if face['box'] is not None:
                         x, y, width, height = face['box']
+
+                        # Increase counter
                         count += 1
 
                         try:
@@ -107,8 +110,11 @@ class hub(object):
                         pass
                 
                 print(count)
+
+                # Display result
                 cv2.imshow("DeepMwoo",frame)
                 
+                # Check user interruptions
                 if cv2.waitKey(30) & 0xFF == ord('q'):
                         break
             else:
@@ -127,4 +133,35 @@ class hub(object):
 
             @param[in]      image_source        Source image file to read  
         """
-        pass
+        # Initialize the MTCNN 
+        detector = MTCNN()
+
+        # Read an image with its default color
+        frame = cv2.imread(image_source)
+
+        # Detect list of faces
+        faces = detector.detect_faces(frame)
+
+        # Initialize counter
+        count = 0
+        for face in faces:
+            if face['box'] is not None:
+                x, y, width, height = face['box']
+
+                # Increase counter
+                count += 1
+
+                try:
+                    frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+                except IndexError as err:
+                    print(err)
+            else:
+                pass
+        
+        print(count)
+
+        # Display result
+        cv2.imshow("DeepMwoo",frame)
+
+        # Check user interruptions
+        cv2.waitKey(0)

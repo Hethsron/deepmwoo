@@ -120,16 +120,16 @@ class mwoo(object):
             elif o in ('-i', '--image'):
                 # Check if given argument is a valid readable image
                 if argv.is_image(given_argv = a):
-                    print('ok')
-                    pass
+                    # Built-in tracking
+                    hub.ImageTracking(image_source = a)
                 else:
                     # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
             elif o in ('-m', '--media'):
                 # Check if given argument is a valid readable video
                 if argv.is_video(given_argv = a):
-                     # Built-in tracking
-                     hub.VideoTracking(video_source = a)
+                    # Built-in tracking
+                    hub.VideoTracking(video_source = a)
                 else:
                     # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
