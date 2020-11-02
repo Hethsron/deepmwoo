@@ -91,8 +91,8 @@ class cv4(IntEnum):
                                             coordinates are represented as tuple of two values
                                             i.e (X coordinate value, Y coordinate value).
             @param[in]      color           It is the color of border line of rectangle to be
-                                            drawn. For BGR, we pass a tuple. eg (255, 0, 0)
-                                            for blue color.
+                                            drawn. For BGR, we pass a tuple. eg (0, 255, 255)
+                                            for yellow color.
             @param[in]      thickness       It is the thickness of the rectangle border line 
                                             in pixel (px). Thickness of -1px will fill the
                                             rectangle shape by the specified color.
