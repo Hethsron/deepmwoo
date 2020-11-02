@@ -30,10 +30,11 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-__version__ = '0.0.1'
 __all__     = [
     'access',
     'core',
     'log',
     'shapes'
 ]
+
+__version__ = '0.0.1'

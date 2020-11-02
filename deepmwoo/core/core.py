@@ -56,7 +56,7 @@
 """
 
 from mtcnn.mtcnn import MTCNN
-from deepmwoo.core.shapes import cv4, cv2
+from .shapes import cv4, cv2
 
 class hub(object):
     """!
