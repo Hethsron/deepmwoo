@@ -120,6 +120,7 @@ class mwoo(object):
             elif o in ('-i', '--image'):
                 # Check if given argument is a valid readable image
                 if argv.is_image(given_argv = a):
+                    print('ok')
                     pass
                 else:
                     # Built-in assert statement to find errors
