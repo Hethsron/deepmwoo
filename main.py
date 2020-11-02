@@ -58,6 +58,7 @@
 import os, re, sys
 from art import tprint
 from deepmwoo.core.core import hub
+from deepmwoo.core.access import argv
 from getopt import getopt, GetoptError
 
 class mwoo(object):
@@ -72,7 +73,7 @@ class mwoo(object):
             @fn     version
             @brief  Display information about `deepmwoo` release.
         """
-        tprint('DeepMwoo', font='bulbhead')
+        tprint('DeepMwoo', font = 'bulbhead')
         print('Version 0.0.1')
         print('License GPLv3+ : GNU GPL version 3 or later')
         print('Licencied Material - Property of Stimul’Activ®')
@@ -98,7 +99,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'd:hipuv', ['device=', 'help', 'image', 'player', 'url', 'version'])
+            opts, args = getopt(sys.argv[1:], 'd:hi:m:uv', ['device=', 'help', 'image=', 'media=', 'url', 'version'])
         except GetoptError as err:
             print(err)
 
@@ -107,19 +108,30 @@ class mwoo(object):
 
         for o, a in opts:
             if o in ('-d', '--device'):
-                # Check if pattern matches with given argument
-                if re.compile('^(VID[0-2])|(vid[0-2])$').match(a):
+                # Check if given argument is a valid device
+                if argv.is_device(given_argv = a):
                     # Built-in tracking
-                    hub.VideoTracking(int(re.findall(r'\d+', a)[0]))
+                    hub.VideoTracking(video_source = int(re.findall(r'\d+', a)[0]))
                 else:
                     # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
             elif o in ('-h', '--help'):
                 mwoo.__usage__()
             elif o in ('-i', '--image'):
-                pass
-            elif o in ('-p', '--player'):
-                pass
+                # Check if given argument is a valid readable image
+                if argv.is_image(given_argv = a):
+                    pass
+                else:
+                    # Built-in assert statement to find errors
+                    assert False, 'Invalid argument'
+            elif o in ('-m', '--media'):
+                # Check if given argument is a valid readable video
+                if argv.is_video(given_argv = a):
+                     # Built-in tracking
+                     hub.VideoTracking(video_source = a)
+                else:
+                    # Built-in assert statement to find errors
+                    assert False, 'Invalid argument'
             elif o in ('-u', '--url'):
                 pass
             elif o in ('-v', '--version'):

@@ -18,7 +18,7 @@
 
 """!
     @file       core.py
-    @brief      
+    @brief      Basic Processing Hub For Facial Recognition Algorithm Using Deep Learning
     @details    
     
     @author     BOUEYA Hethsron Jedaël <hethsron-jedael.boueya@uha.fr>
@@ -73,7 +73,10 @@ class hub(object):
     def VideoTracking(video_source = None):
         """!
             @fn     VideoTracking
-            @brief  
+            @brief  Capture live stream and performs face detection, face tracking and
+                    face recognition techniques for identifying unknown people
+
+            @param[in]      video_source        Source video file to capture frame by frame  
         """
         # Initialize the MTCNN 
         detector = MTCNN()
@@ -114,3 +117,14 @@ class hub(object):
         # Release everything if job is finished
         cap.release()
         cv2.destroyAllWindows()
+
+    @staticmethod
+    def ImageTracking(image_source = None):
+        """!
+            @fn     ImageTracking
+            @brief  Read an image and performs face detection, face tracking and
+                    face recognition techniques for identifying unknown people
+
+            @param[in]      image_source        Source image file to read  
+        """
+        pass

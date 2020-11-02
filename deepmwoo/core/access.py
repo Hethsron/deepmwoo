@@ -18,7 +18,7 @@
 
 """!
     @file       access.py
-    @brief      
+    @brief      Basic Access Manager For Facial Recognition Algorithm Using Deep Learning
     @details    
     
     @author     BOUEYA Hethsron Jedaël <hethsron-jedael.boueya@uha.fr>
@@ -55,3 +55,69 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
+import filetype, os, re
+
+class argv(object):
+    """!
+        @class      argv
+        @brief      Define useful static methods to control given argument
+    """
+
+    @staticmethod
+    def is_device(given_argv = None):
+        """!
+            @fn     is_device
+            @brief  Returns True if given argument is a valid device, False otherwise
+
+            @param[in]      given_argv      Given argument
+            @return         True if given_argv is a valid device, False otherwise
+        """
+        # Check if pattern matches with given argument
+        if re.compile('^(VID[0-2])|(vid[0-2])$').match(given_argv):
+            # Return True statement
+            return True
+        # Return False statement
+        return False
+
+    @staticmethod
+    def is_image(given_argv = None):
+        """!
+            @fn     is_image
+            @brief  Returns True if given argument is a valid readable image, False otherwise
+
+            @param[in]      given_argv      Given argument
+            @return         True if given_argv is a valid readable image, False otherwise
+        """
+        # Check if given argument is an existing and readable file image
+        if os.path.isfile(given_argv) and os.access(given_argv, os.R_OK) and filetype.is_image(given_argv):
+            # Return True statement
+            return True
+        # Return False statement
+        return False
+
+    @staticmethod
+    def is_video(given_argv = None):
+        """!
+            @fn     is_video
+            @brief  Returns True if given argument is a valid readable video, False otherwise
+
+            @param[in]      given_argv      Given argument
+            @return         True if given_argv is a valid readable video, False otherwise
+        """
+        # Check if given argument is an existing and readable file video
+        if os.path.isfile(given_argv) and os.access(given_argv, os.R_OK) and filetype.is_video(given_argv):
+            # Return True statement
+            return True
+        # Return False statement
+        return False
+
+    @staticmethod
+    def is_remote_device(given_argv = None):
+        """!
+            @fn     is_remote_device
+            @brief  Returns True if given argument is a valid remote device, False otherwise
+
+            @param[in]      given_argv      Given argument
+            @return         True if given_argv is a valid remote device, False otherwise
+        """
+        pass

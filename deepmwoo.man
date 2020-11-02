@@ -23,7 +23,7 @@ display this help and exit
 .B -i, --image
 identify a person from a digital image (from [SOURCE] that could be a JPEG or JPG file)
 .TP
-.B -p, --player
+.B -m, --media
 identify a person from a video frame (from [SOURCE] that could be an AVI, MPEG-4 or MATROSKA file)
 .TP
 .B -u, --url

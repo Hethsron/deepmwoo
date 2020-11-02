@@ -18,7 +18,7 @@
 
 """!
     @file       log.py
-    @brief      
+    @brief      Basic Log Manager For Facial Recognition Algorithm Using Deep Learning
     @details    
     
     @author     BOUEYA Hethsron Jedaël <hethsron-jedael.boueya@uha.fr>
