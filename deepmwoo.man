@@ -36,7 +36,7 @@ Some examples of common usage.
 .SH NOTES
 All above options are not muttually exclusive and cannot be used together.
 .SH EXIT STATUS
-If OpenCV 3.4.2, libjson-c, libcurl and libcppdb are not installed on the system, this program will end with exit status.
+If requirements are not installed on the system, this program will end with exit status.
 .SH SEE ALSO
 Full documentation at : <https://github.com/Hethsron/deepmwoo>
 .SH REPORTING BUGS
