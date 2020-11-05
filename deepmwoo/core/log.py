@@ -55,3 +55,38 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
+from .shapes import cv2
+import pyshine as ps
+
+class maker(object):
+    """!
+        @class      maker
+        @brief      Define useful static methods which implements various
+                    techniques to display and save log of result
+    """
+
+    @staticmethod
+    def legend(given_frame = None, score_people = None):
+        """!
+            @fn     legend
+            @brief  Returns image with bounded box of legend
+
+            @param[in]      given_frame     Given frame
+            @param[in]      number_people   Score of people
+            @return         Image
+        """
+
+        # Store pixels values of image
+        overlay = given_frame.copy()
+        
+        # Definition of text
+        text  =  'People : ' + str(score_people)
+
+        # Adding text with transparent rectangle
+        overlay = ps.putBText(overlay, text, text_offset_x = int(overlay.shape[1] / 2), text_offset_y = int(overlay.shape[0] / 2), vspace = 10, hspace = 10, font_scale = 1.0, background_RGB = (0, 0, 0), text_RGB = (255, 255, 0))
+
+        # Drawing line
+        overlay = cv2.line(overlay, (int(overlay.shape[1] / 2) + int(overlay.shape[0] / 4), int(overlay.shape[0] / 2.0125)), (int(overlay.shape[0] / 2) + int(overlay.shape[1] / 5.35), int(overlay.shape[0] / 2.0125)), (0, 255, 255), 1)
+
+        # Returns image
+        return overlay

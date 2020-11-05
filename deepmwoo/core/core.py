@@ -57,6 +57,7 @@
 
 from mtcnn.mtcnn import MTCNN
 from .shapes import cv4, cv2
+from .log import maker
 
 class hub(object):
     """!
@@ -93,14 +94,14 @@ class hub(object):
                 # Detect list of faces
                 faces = detector.detect_faces(frame)
                 
-                # Initialize counter
-                count = 0
+                # Initialize score of people
+                people = 0
                 for face in faces:
                     if face['box'] is not None:
                         x, y, width, height = face['box']
 
-                        # Increase counter
-                        count += 1
+                        # Increase score of people
+                        people += 1
 
                         try:
                             frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
@@ -109,7 +110,8 @@ class hub(object):
                     else:
                         pass
                 
-                print(count)
+                # Returns frame with bounded box of legend
+                frame = maker.legend( given_frame = frame, score_people = people)
 
                 # Display result
                 cv2.imshow("DeepMwoo",frame)
@@ -142,14 +144,14 @@ class hub(object):
         # Detect list of faces
         faces = detector.detect_faces(frame)
 
-        # Initialize counter
-        count = 0
+        # Initialize score of people
+        people = 0
         for face in faces:
             if face['box'] is not None:
                 x, y, width, height = face['box']
 
                 # Increase counter
-                count += 1
+                people += 1
 
                 try:
                     frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
@@ -158,7 +160,8 @@ class hub(object):
             else:
                 pass
         
-        print(count)
+        # Returns frame with bounded box of legend
+        frame = maker.legend( given_frame = frame, score_people = people)
 
         # Display result
         cv2.imshow("DeepMwoo",frame)

@@ -30,5 +30,5 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-from .core import __all__, 
+from .core import __all__ 
 from .core import __version__
