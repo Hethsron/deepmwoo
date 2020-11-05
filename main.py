@@ -99,7 +99,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'd:hi:m:uv', ['device=', 'help', 'image=', 'media=', 'url', 'version'])
+            opts, args = getopt(sys.argv[1:], 'bd:hi:m:uv', [ 'build', 'device=', 'help', 'image=', 'media=', 'url', 'version' ])
         except GetoptError as err:
             print(err)
 
@@ -107,7 +107,9 @@ class mwoo(object):
             sys.exit(2)
 
         for o, a in opts:
-            if o in ('-d', '--device'):
+            if o in ('-b', '--build'):
+                pass
+            elif o in ('-d', '--device'):
                 # Check if given argument is a valid device
                 if argv.is_device(given_argv = a):
                     # Built-in tracking

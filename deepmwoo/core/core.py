@@ -111,10 +111,11 @@ class hub(object):
                         pass
                 
                 # Returns frame with bounded box of legend
-                frame = maker.legend( given_frame = frame, score_people = people)
+                if people:
+                    frame = maker.legend(given_frame = frame, score_people = people)
 
                 # Display result
-                cv2.imshow("DeepMwoo",frame)
+                cv2.imshow('',frame)
                 
                 # Check user interruptions
                 if cv2.waitKey(30) & 0xFF == ord('q'):
@@ -161,10 +162,11 @@ class hub(object):
                 pass
         
         # Returns frame with bounded box of legend
-        frame = maker.legend( given_frame = frame, score_people = people)
+        if people:
+            frame = maker.legend( given_frame = frame, score_people = people)
 
         # Display result
-        cv2.imshow("DeepMwoo",frame)
+        cv2.imshow('',frame)
 
         # Check user interruptions
         cv2.waitKey(0)
