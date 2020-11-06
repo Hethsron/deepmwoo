@@ -66,6 +66,12 @@ For developement, before running the application, you need to create your own vi
         $ python3 main.py --help
     ```
 
+For Windows Users, before running help, it is necessary to set the excution policy to `RemoteSigned` as follows :
+
+    ```console
+        $ Set-ExecutionPolicy RemoteSigned
+    ```
+
 For development, before committing the changes on the `master` branch, it is necessary to define locally a `.gitignore` file which must contain the following lines to remove byte-compiled, byte-optimized files and packaging, as follows :
 
     **/__pycache__
