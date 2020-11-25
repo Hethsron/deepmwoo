@@ -32,7 +32,7 @@
 
 from .core import __all__ 
 from .core import __version__
-import os
+from .core.access import os
 
 # Disable all debugging logs. In details
 #

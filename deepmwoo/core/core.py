@@ -79,7 +79,7 @@ class hub(object):
 
             @param[in]      video_source        Source video file to capture frame by frame  
         """
-        # Initialize the MTCNN 
+        # Create the detector, using default weights 
         detector = MTCNN()
 
         # Create a VideoCapture object
@@ -91,11 +91,16 @@ class hub(object):
 
             # Check if frame is read correctly
             if ret is True:
-                # Detect list of faces
+                # Detect faces in the frame
                 faces = detector.detect_faces(frame)
+
+                # Define face array instance
+                face_array = None
                 
                 # Initialize score of people
                 people = 0
+
+                # Extract the bounding box from all faces
                 for face in faces:
                     if face['box'] is not None:
                         x, y, width, height = face['box']
@@ -105,11 +110,23 @@ class hub(object):
 
                         try:
                             frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+                            
+                            # Extract the face
+                            face_array = frame[y:y + height, x:x + width]
                         except IndexError as err:
                             print(err)
                     else:
                         pass
                 
+                # Check if face array instance is not None
+                if face_array is not None:
+                    # Convert face array instance to grayscale
+                    face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+
+                    # Resize face array instance to the model size
+                    face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+                    pass
+
                 # Returns frame with bounded box of legend
                 if people:
                     frame = maker.legend(given_frame = frame, score_people = people)
@@ -136,17 +153,22 @@ class hub(object):
 
             @param[in]      image_source        Source image file to read  
         """
-        # Initialize the MTCNN 
+        # Create the detector, using default weights
         detector = MTCNN()
 
         # Read an image with its default color
         frame = cv2.imread(image_source)
 
-        # Detect list of faces
+        # Detect faces in the frame
         faces = detector.detect_faces(frame)
+
+        # Define face array instance
+        face_array = None
 
         # Initialize score of people
         people = 0
+
+        # Extract the bounding box from all faces
         for face in faces:
             if face['box'] is not None:
                 x, y, width, height = face['box']
@@ -156,10 +178,22 @@ class hub(object):
 
                 try:
                     frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+
+                    # Extract the face
+                    face_array = frame[y:y + height, x:x + width]
                 except IndexError as err:
                     print(err)
             else:
                 pass
+
+        # Check if face_array is not None
+        if face_array is not None:
+            # Convert face array instance to grayscale
+            face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+
+            # Rsize face array instance to the model size
+            face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+            pass
         
         # Returns frame with bounded box of legend
         if people:

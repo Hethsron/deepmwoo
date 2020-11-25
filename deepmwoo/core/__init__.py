@@ -34,6 +34,7 @@ __all__     = [
     'access',
     'core',
     'log',
+    'net'
     'shapes'
 ]
 

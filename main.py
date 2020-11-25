@@ -55,10 +55,11 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-import os, re, sys
+import sys, glob
 from art import tprint
+from deepmwoo.core.access import argv, os, re
 from deepmwoo.core.core import hub
-from deepmwoo.core.access import argv
+from deepmwoo.core.net import net
 from getopt import getopt, GetoptError
 
 class mwoo(object):
@@ -70,7 +71,7 @@ class mwoo(object):
     @staticmethod
     def __version__():
         """!
-            @fn     version
+            @fn     __version__
             @brief  Display information about `deepmwoo` release.
         """
         tprint('DeepMwoo', font = 'bulbhead')
@@ -82,7 +83,7 @@ class mwoo(object):
     @staticmethod
     def __usage__():
         """!
-            @fn     usage
+            @fn     __usage__
             @brief  Display most of command line options that you can use
                     with `deepmwoo`.
         """
@@ -99,7 +100,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'bd:hi:m:uv', [ 'build', 'device=', 'help', 'image=', 'media=', 'url', 'version' ])
+            opts, args = getopt(sys.argv[1:], 'bd:hi:m:uvr:', [ 'build', 'device=', 'help', 'image=', 'media=', 'url', 'version', 'rescale=' ])
         except GetoptError as err:
             print(err)
 
@@ -139,6 +140,16 @@ class mwoo(object):
                 pass
             elif o in ('-v', '--version'):
                 mwoo.__version__()
+            elif o in ('-r', '--rescale'):
+                # Check if given argument is a valid dataset directory
+                if os.path.isdir(os.getcwd() + '/datasets/' + a):
+                    root_dirs = glob.glob(os.getcwd() + '/datasets/' + a + '/*/')
+                    for root_dir in root_dirs:
+                        # Rescaling given dataset directory
+                        net.rescale_datasets(root_dir = root_dir)
+                else:
+                    # Built-in assert statement to find errors
+                    assert False, 'Invalid argument'
             else:
                 # Built-in assert statement to find errors
                 assert False, 'Unhandled option'
