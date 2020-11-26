@@ -109,7 +109,13 @@ class mwoo(object):
 
         for o, a in opts:
             if o in ('-c', '--compile'):
-                pass
+                # Check if variable is an integer
+                if isinstance(a, int):
+                    # Compute transfer learning process
+                    net.computation(batch_size = a)
+                else:
+                     # Built-in assert statement to find errors
+                    assert False, 'Invalid argument'
             elif o in ('-d', '--device'):
                 # Check if given argument is a valid device
                 if argv.is_device(given_argv = a):

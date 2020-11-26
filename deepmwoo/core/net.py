@@ -55,6 +55,12 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
+from glob import glob
+from keras.applications.vgg16 import VGG16
+from keras.layers import Dense, Flatten
+from keras.models import Model
+from keras.preprocessing.image import ImageDataGenerator
+from matplotlib import pyplot as plt
 from mtcnn.mtcnn import MTCNN
 from .access import re, os
 from .shapes import cv2
@@ -216,3 +222,11 @@ class net(object):
             # Remove original filename
             os.remove(filename)
 
+    @staticmethod
+    def computation(batch_size):
+        """!
+            @fn     computation
+            @brief  Compute transfer learning process from pre-trained weights
+
+            @param[in]      batch_size        Number of samples that will be propagated through the network.
+        """
