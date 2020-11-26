@@ -225,12 +225,12 @@ class net(object):
             os.remove(filename)
 
     @staticmethod
-    def computation(epochs = 15, batch_size = 32, required_size = (224, 224)):
+    def computation(epochs = 32, batch_size = 32, required_size = (224, 224)):
         """!
             @fn     computation
             @brief  Compute transfer learning process from pre-trained weights
 
-            @param[in]      epochs          Number of
+            @param[in]      epochs          Number of epochs
             @param[in]      batch_size      Number of samples that will be propagated through the network.
             @param[in]      required_size   Model size of the image
         """
@@ -265,14 +265,16 @@ class net(object):
             train_generator = train_datagen.flow_from_directory(train_sets_dir,
                                     target_size = required_size,
                                     batch_size = batch_size,
-                                    class_mode = 'categorical'
+                                    class_mode = 'categorical',
+                                    shuffle = True
             )
 
             # Generate batches of tensor image data with real time data augmentation
             validation_generator = validation_datagen.flow_from_directory(validation_sets_dir,
                                     target_size = required_size,
                                     batch_size = batch_size,
-                                    class_mode = 'categorical'
+                                    class_mode = 'categorical',
+                                    shuffle = True
             )
 
             # Load base model
@@ -304,32 +306,37 @@ class net(object):
                                     metrics = ['accuracy']
             )
 
-            # Define ModelCheckPoint callback
-            checkpoint = ModelCheckpoint('models/mwoo_model.h5',
-                                    monitor = 'val_loss',
-                                    mode = 'min',
-                                    save_best_only = True,
-                                    verbose = 1
-            )
+            # Set callbacks
+            callbacks = None
 
-            # Define EarlyStopping callback
-            earlystop = EarlyStopping(monitor = 'val_loss',
-                                    min_delta = 0,
-                                    patience = 3,
-                                    verbose = 1,
-                                    restore_best_weights = True
-            )
+            # Check if pre-trained model exists
+            if os.path.isfile('models/mwoo_model.h5'):
+                # Define ModelCheckPoint callback
+                checkpoint = ModelCheckpoint('models/mwoo_model.h5',
+                                        monitor = 'val_loss',
+                                        mode = 'min',
+                                        save_best_only = True,
+                                        verbose = 1
+                )
 
-            # Define ReduceLROnPlateau callback
-            reduce_lr = ReduceLROnPlateau(monitor = 'val_loss',
-                                    factor = 0.2,
-                                    patience = 3,
-                                    verbose = 1,
-                                    min_delta = 0.0001
-            )
+                # Define EarlyStopping callback
+                earlystop = EarlyStopping(monitor = 'val_loss',
+                                        min_delta = 0,
+                                        patience = 3,
+                                        verbose = 1,
+                                        restore_best_weights = True
+                )
 
-            # Set Callbacks
-            callbacks = [earlystop, checkpoint, reduce_lr]
+                # Define ReduceLROnPlateau callback
+                reduce_lr = ReduceLROnPlateau(monitor = 'val_loss',
+                                        factor = 0.2,
+                                        patience = 3,
+                                        verbose = 1,
+                                        min_delta = 0.0001
+                )
+
+                # Update Callbacks
+                callbacks = [earlystop, checkpoint, reduce_lr]
 
             # Trains the model on data generated batch-by-batch by a Python generator
             H = model.fit(train_generator,

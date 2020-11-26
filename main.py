@@ -112,7 +112,7 @@ class mwoo(object):
                 # Check if variable is an integer
                 if isinstance(int(a), int):
                     # Compute transfer learning process
-                    net.computation()
+                    net.computation(int(a))
                 else:
                      # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
