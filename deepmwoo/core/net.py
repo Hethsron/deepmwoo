@@ -57,8 +57,10 @@
 
 from glob import glob
 from keras.applications.vgg16 import VGG16
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from keras.layers import Dense, Flatten
 from keras.models import Model
+from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot as plt
 from mtcnn.mtcnn import MTCNN
@@ -223,10 +225,156 @@ class net(object):
             os.remove(filename)
 
     @staticmethod
-    def computation(batch_size):
+    def computation(epochs = 15, batch_size = 32, required_size = (224, 224)):
         """!
             @fn     computation
             @brief  Compute transfer learning process from pre-trained weights
 
-            @param[in]      batch_size        Number of samples that will be propagated through the network.
+            @param[in]      epochs          Number of
+            @param[in]      batch_size      Number of samples that will be propagated through the network.
+            @param[in]      required_size   Model size of the image
         """
+        # Check if datasets folders exist
+        if os.path.isdir('datasets/train') and os.path.isdir('datasets/validation'):
+            # Set relative path of train sets
+            train_sets_dir = 'datasets/train'
+
+            # Set relative path of validation sets
+            validation_sets_dir = 'datasets/validation'
+
+            # Set class number
+            num_classes = len(glob('datasets/train/*'))
+
+            # Set the transformation of each train image in the batch by a series of random translations, rotations, etc
+            train_datagen = ImageDataGenerator(featurewise_center = False,
+                                   featurewise_std_normalization = False,
+                                   rotation_range = 30,
+                                   width_shift_range = 0.4,
+                                   height_shift_range = 0.4,
+                                   shear_range = 0.15,
+                                   fill_mode = 'nearest',
+                                   zoom_range = 0.3,
+                                   horizontal_flip = True,
+                                   rescale = 1./255
+            )
+
+            # Set the transformation of each validation image
+            validation_datagen = ImageDataGenerator(rescale=1./255)
+
+            # Generate batches of tensor image data with real time data augmentation
+            train_generator = train_datagen.flow_from_directory(train_sets_dir,
+                                    target_size = required_size,
+                                    batch_size = batch_size,
+                                    class_mode = 'categorical'
+            )
+
+            # Generate batches of tensor image data with real time data augmentation
+            validation_generator = validation_datagen.flow_from_directory(validation_sets_dir,
+                                    target_size = required_size,
+                                    batch_size = batch_size,
+                                    class_mode = 'categorical'
+            )
+
+            # Load base model
+            model = VGG16(input_shape = [224, 224] + [3],
+                                    weights = 'imagenet',
+                                    include_top = False
+            )
+
+            # Lock training of pretrained weights
+            for layer in model.layers:
+                layer.trainable = False
+
+            # Reshape the input data into a format suitable for the convolutional layers
+            x = Flatten()(model.output)
+
+            # Group layers into an object with training and inference features
+            model = Model(inputs = model.input, 
+                                    outputs =  [
+                                                Dense(units = num_classes, activation ='softmax')(x)
+                                            ]
+            )
+
+            # Print a string summary of the network.
+            model.summary()
+
+            # Configures the model for training
+            model.compile(optimizer = Adam(lr=0.001),
+                                    loss = 'categorical_crossentropy',
+                                    metrics = ['accuracy']
+            )
+
+            # Define ModelCheckPoint callback
+            checkpoint = ModelCheckpoint('models/mwoo_model.h5',
+                                    monitor = 'val_loss',
+                                    mode = 'min',
+                                    save_best_only = True,
+                                    verbose = 1
+            )
+
+            # Define EarlyStopping callback
+            earlystop = EarlyStopping(monitor = 'val_loss',
+                                    min_delta = 0,
+                                    patience = 3,
+                                    verbose = 1,
+                                    restore_best_weights = True
+            )
+
+            # Define ReduceLROnPlateau callback
+            reduce_lr = ReduceLROnPlateau(monitor = 'val_loss',
+                                    factor = 0.2,
+                                    patience = 3,
+                                    verbose = 1,
+                                    min_delta = 0.0001
+            )
+
+            # Set Callbacks
+            callbacks = [earlystop, checkpoint, reduce_lr]
+
+            # Trains the model on data generated batch-by-batch by a Python generator
+            H = model.fit(train_generator,
+                                    validation_data = validation_generator,
+                                    epochs = epochs,
+                                    callbacks = callbacks,
+                                    steps_per_epoch = len(train_generator),
+                                    validation_steps = len(validation_generator)
+            )
+
+            # Save trained model
+            model.save('models/mwoo_model.h5')
+
+            # Evaluate the model on a data generator
+            loss, acc = model.evaluate(train_generator, steps = len(train_generator))
+
+            print("The accuracy of train sets is : ", acc)
+            print(loss, acc)
+
+            # Evaluates the model on a data generator
+            loss, acc = model.evaluate(validation_generator, steps = len(validation_generator))
+
+            print("The accuracy of validation sets is :", acc)
+            print(loss, acc)
+
+            # Plot of Model Loss on Training and Validation Datasets
+            plt.plot(H.history['loss'], color = 'blue', label = 'train loss')
+            plt.plot(H.history['val_loss'], color = 'red', label = 'val loss')
+            plt.xlabel('epoch')
+            plt.ylabel('loss')
+            plt.legend()
+            plt.savefig('src/assets/pdf/epoch-loss.pdf')
+            plt.show()
+            plt.close()
+
+            # Plot of Model accuracy on Training and Validation Datasets
+            plt.plot(H.history['accuracy'], color = 'blue', label = 'train acc')
+            plt.plot(H.history['val_accuracy'], color = 'red', label = 'val acc')
+            plt.xlabel('epoch')
+            plt.ylabel('accuracy')
+            plt.legend()
+            plt.savefig('src/assets/pdf/epoch-accuracy.pdf')
+            plt.show()
+            plt.close()
+        else:
+            print('[+] There are any datasets')
+            pass
+

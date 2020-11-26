@@ -110,9 +110,9 @@ class mwoo(object):
         for o, a in opts:
             if o in ('-c', '--compile'):
                 # Check if variable is an integer
-                if isinstance(a, int):
+                if isinstance(int(a), int):
                     # Compute transfer learning process
-                    net.computation(batch_size = a)
+                    net.computation()
                 else:
                      # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
