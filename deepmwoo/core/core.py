@@ -55,7 +55,11 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
+import numpy as np
+from keras.models import load_model
+from keras.preprocessing.image import img_to_array
 from mtcnn.mtcnn import MTCNN
+from .access import os
 from .shapes import cv4, cv2
 from .log import maker
 
@@ -85,6 +89,14 @@ class hub(object):
         # Create a VideoCapture object
         cap = cv2.VideoCapture(video_source)
 
+        # Define classifier model
+        classifier = None
+
+        # Check if pre-trained model exists
+        if os.path.isfile('models/mwoo_model.h5'):
+            # Update classifier model
+            classifier = load_model('models/mwoo_model.h5')
+
         # Check whether VideoCapture is initialized or not
         while (cap.isOpened()):
             ret, frame = cap.read()
@@ -113,19 +125,19 @@ class hub(object):
                             
                             # Extract the face
                             face_array = frame[y:y + height, x:x + width]
+
+                            # Check if face array instance is not None
+                            if face_array is not None:
+                                # Convert face array instance to grayscale
+                                face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+
+                                # Resize face array instance to the model size
+                                face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+                                pass
                         except IndexError as err:
                             print(err)
                     else:
                         pass
-                
-                # Check if face array instance is not None
-                if face_array is not None:
-                    # Convert face array instance to grayscale
-                    face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
-
-                    # Resize face array instance to the model size
-                    face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
-                    pass
 
                 # Returns frame with bounded box of legend
                 if people:
@@ -156,6 +168,14 @@ class hub(object):
         # Create the detector, using default weights
         detector = MTCNN()
 
+        # Define classifier model
+        classifier = None
+
+        # Check if pre-trained model exists
+        if os.path.isfile('models/mwoo_model.h5'):
+            # Update model classifier
+            classifier = load_model('models/mwoo_model.h5')
+
         # Read an image with its default color
         frame = cv2.imread(image_source)
 
@@ -181,19 +201,19 @@ class hub(object):
 
                     # Extract the face
                     face_array = frame[y:y + height, x:x + width]
+
+                    # Check if face_array is not None
+                    if face_array is not None:
+                        # Convert face array instance to grayscale
+                        face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+
+                        # Rsize face array instance to the model size
+                        face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+                        pass
                 except IndexError as err:
                     print(err)
             else:
                 pass
-
-        # Check if face_array is not None
-        if face_array is not None:
-            # Convert face array instance to grayscale
-            face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
-
-            # Rsize face array instance to the model size
-            face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
-            pass
         
         # Returns frame with bounded box of legend
         if people:
