@@ -14,8 +14,8 @@ is a facial recognition software based on deep learning, whose objective is, fro
 .B DeepMwoo
 take some options. Mandatory arguments to long options are mandatory for short options too.
 .TP
-.B -b, --build
-build a pre-trained model that can help to recognize person
+.B -c, --compile
+build a pre-trained model that can help to recognize person from specific number of class label (from [SOURCE] that could be a number)
 .TP
 .B -d, --device
 identify a person from a video frame (from [SOURCE] that could be VID0, VID1 or VID2)

@@ -78,7 +78,7 @@ class net(object):
             @param[in]      filename        String representing the image
             @param[in]      required_size   Model size of the image
         """
-        # Load image from filnema
+        # Load image from filename
         frame = cv2.imread(filename)
 
         # Create the detector, using default weights
@@ -108,9 +108,56 @@ class net(object):
             face_array = cv2.resize(face_array, required_size, cv2.INTER_AREA)
             pass
 
-        # Resize the pixels to the model
+        # Return the pixel to the model
         return face_array
 
+    @staticmethod
+    def __extract_face_2__(filename, required_size = (224, 224)):
+        """!
+            @fn     __extract_face__
+            @brief  Extract face from an image and return face array instance resized to the
+                    model size
+
+            @param[in]      filename        String representing the image
+            @param[in]      required_size   Model size of the image
+        """
+        # Load image from filname
+        frame = cv2.imread(filename)
+
+        # Define face array instance
+        face_array = None
+
+        # Load Haar Cascade file
+        if os.path.isfile('models/haarcascade.xml'):
+            faceCascade = cv2.CascadeClassifier('models/haarcascade.xml')
+
+            # Detect faces in the frame
+            faces = faceCascade.detectMultiScale(
+                    frame,
+                    scaleFactor = 1.3,
+                    minNeighbors = 3,
+                    minSize = required_size
+            )
+
+            # Extract the bounding box from the first face
+            for (x, y, width, height) in faces:
+                # Extract the face
+                try:
+                    face_array = frame[y:y + height, x:x + width]
+                except IndexError as err:
+                    print(err)
+
+             # Check if face array instance is not None
+            if face_array is not None:
+                # Convert face array instance to grayscale
+                face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+
+                # Resize face array instance to the model size
+                face_array = cv2.resize(face_array, required_size, cv2.INTER_AREA)
+                pass
+
+        # Return the pixel of the model
+        return face_array
 
     @staticmethod
     def rescale_datasets(root_dir, required_size = (224, 224)):
@@ -149,10 +196,12 @@ class net(object):
 
         for filename in filenames:
             # Extract face form an image
-            face_array = net.__extract_face__(filename, required_size)
-
-            # Append extracted face array in the list
-            face_arrays.append(face_array)
+            face_array = net.__extract_face_2__(filename, required_size)
+            
+            # Check if face array is not None
+            if face_array is not None:
+                # Append extracted face array in the list
+                face_arrays.append(face_array)
 
         # Check if there are extracted faces in the memory
         if not face_arrays:

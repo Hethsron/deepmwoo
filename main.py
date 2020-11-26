@@ -100,7 +100,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'bd:hi:m:uvr:', [ 'build', 'device=', 'help', 'image=', 'media=', 'url', 'version', 'rescale=' ])
+            opts, args = getopt(sys.argv[1:], 'c:d:hi:m:uvr:', [ 'compile=', 'device=', 'help', 'image=', 'media=', 'url', 'version', 'rescale=' ])
         except GetoptError as err:
             print(err)
 
@@ -108,7 +108,7 @@ class mwoo(object):
             sys.exit(2)
 
         for o, a in opts:
-            if o in ('-b', '--build'):
+            if o in ('-c', '--compile'):
                 pass
             elif o in ('-d', '--device'):
                 # Check if given argument is a valid device
@@ -142,8 +142,8 @@ class mwoo(object):
                 mwoo.__version__()
             elif o in ('-r', '--rescale'):
                 # Check if given argument is a valid dataset directory
-                if os.path.isdir(os.getcwd() + '/datasets/' + a):
-                    root_dirs = glob.glob(os.getcwd() + '/datasets/' + a + '/*/')
+                if os.path.isdir('datasets/' + a):
+                    root_dirs = glob.glob('datasets/' + a + '/*/')
                     for root_dir in root_dirs:
                         # Rescaling given dataset directory
                         net.rescale_datasets(root_dir = root_dir)
