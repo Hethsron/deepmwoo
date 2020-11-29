@@ -55,17 +55,16 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-from glob import glob
-from keras.applications.vgg16 import VGG16
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-from keras.layers import Dense, Flatten
-from keras.models import Model
-from keras.optimizers import Adam
-from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+from PIL import Image
 from matplotlib import pyplot as plt
 from mtcnn.mtcnn import MTCNN
+from keras.applications.vgg16 import VGG16
+from keras.layers import Dense, Flatten
+from keras.models import Model
+from keras.optimizers import SGD
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from .access import re, os
-from .shapes import cv2
 
 class net(object):
     """!
@@ -78,310 +77,366 @@ class net(object):
 
     @staticmethod
     def __extract_face__(filename, required_size = (224, 224)):
-        """!
-            @fn     __extract_face__
-            @brief  Extract face from an image and return face array instance resized to the
-                    model size
-
-            @param[in]      filename        String representing the image
-            @param[in]      required_size   Model size of the image
         """
-        # Load image from filename
-        frame = cv2.imread(filename)
+            @fn         __extract_face__
+            @brief      Extract a single face from a given photograph
+
+            @param[in]      filename            Input file that contains a face to extract
+            @param[in]      required_size       Model size of image
+            @return                             Single face extracted
+        """
+        # Load an image from a given file
+        image = Image.open(filename)
+
+        # Convert the image to RGB, if needed
+        image = image.convert('RGB')
+
+        # Convert RGB image to numpy array
+        pixels = np.asfarray(image)
 
         # Create the detector, using default weights
         detector = MTCNN()
 
-        # Detect faces in the frame
-        faces = detector.detect_faces(frame)
+        # Detect faces in the image
+        faces = detector.detect_faces(pixels)
 
         # Extract the bounding box from the first face
         x, y, width, height = faces[0]['box']
 
-        # Define face array instance
-        face_array = None
+        # Fix bug if needed
+        x1, y1 = abs(x), abs(y)
+        x2, y2 = x1 + width, y1 + height
 
-        # Extract the face
+        # Define face array instance
+        face = None
+
+        # Avoid out of box exception
         try:
-            face_array = frame[y:y + height, x:x + width]
+            # Extract the face
+            face = pixels[y1:y2, x1:x2]
         except IndexError as err:
             print(err)
 
-        # Check if face array instance is not None
-        if face_array is not None:
-            # Convert face array instance to grayscale
-            face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
+        # Define image
+        image = None
 
-            # Resize face array instance to the model size
-            face_array = cv2.resize(face_array, required_size, cv2.INTER_AREA)
-            pass
+        try:
+            # Resize pixels to the model size
+            image = Image.fromarray((face * 255).astype(np.uint8))
+            image = image.resize(required_size)
+        except TypeError as err:
+            print(err)
 
-        # Return the pixel to the model
-        return face_array
-
-    @staticmethod
-    def __extract_face_2__(filename, required_size = (224, 224)):
-        """!
-            @fn     __extract_face__
-            @brief  Extract face from an image and return face array instance resized to the
-                    model size
-
-            @param[in]      filename        String representing the image
-            @param[in]      required_size   Model size of the image
-        """
-        # Load image from filname
-        frame = cv2.imread(filename)
-
-        # Define face array instance
-        face_array = None
-
-        # Load Haar Cascade file
-        if os.path.isfile('models/haarcascade.xml'):
-            faceCascade = cv2.CascadeClassifier('models/haarcascade.xml')
-
-            # Detect faces in the frame
-            faces = faceCascade.detectMultiScale(
-                    frame,
-                    scaleFactor = 1.3,
-                    minNeighbors = 3,
-                    minSize = required_size
-            )
-
-            # Extract the bounding box from the first face
-            for (x, y, width, height) in faces:
-                # Extract the face
-                try:
-                    face_array = frame[y:y + height, x:x + width]
-                except IndexError as err:
-                    print(err)
-
-             # Check if face array instance is not None
-            if face_array is not None:
-                # Convert face array instance to grayscale
-                face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
-
-                # Resize face array instance to the model size
-                face_array = cv2.resize(face_array, required_size, cv2.INTER_AREA)
-                pass
-
-        # Return the pixel of the model
-        return face_array
+        # Return face array
+        return np.asfarray(image)
 
     @staticmethod
-    def rescale_datasets(root_dir, required_size = (224, 224)):
-        """!
-            @fn     rescale_datasets
-            @brief  Prepare good training and validation datasets for deep learning process.
-                    This procedure improve the quality of a dataset by reducing dimensions 
-                    and avoiding the situation when some of the values overweight others
-
-            @param[in]      root_dir        String representing the directory of datasets
-            @param[in]      required_size   Model size of the image
+    def __load_faces__(directory = str()):
         """
-        # Define filename list
-        filenames = []
+            @fn         __load_faces__
+            @brief      Load images and extract faces for all images in a directory
 
-        # Define face array instance list
-        face_arrays = []
+            @param[in]      directory           Input directory of dataset
+            @return                             Faces vectors      
+        """
+        # Initialize the list
+        faces = list()
 
-        # Define dataset directories list
-        root_dirs = []
+        # Enumerate files
+        for filename in os.listdir(directory):
+            # Skip any files that may be unauthorized
+            if not re.compile('^(.*jpg)|(.*jpeg)|(.*png)$').match(filename):
+                # Go to the next step
+                continue
 
-        for root, dirs, files in os.walk(root_dir):
-            for file in files:
-                # Check if filename match with the required regex
-                if re.compile('^(.*jpg)|(.*jpeg)|(.*png)$').match(file):
-                    # Append dataset directory in the list
-                    root_dirs.append(root_dir)
+            # Create the absolute path of the file
+            path = directory + filename
 
-                    # Append filename in the list
-                    filenames.append(root_dir + file)
-        
-        # Check if there are entries in datasets directories
-        if not filenames and not root_dirs:
-            print('[+] There are no entries in datasets directories')
-            return
+            # Define face array instance
+            face = None
 
-        for filename in filenames:
-            # Extract face form an image
-            face_array = net.__extract_face_2__(filename, required_size)
-            
+            # Get face
+            face = net.__extract_face__(path)
+
             # Check if face array is not None
-            if face_array is not None:
-                # Append extracted face array in the list
-                face_arrays.append(face_array)
+            if face is not None:
+                # Store face
+                faces.append(face)
 
-        # Check if there are extracted faces in the memory
-        if not face_arrays:
-            print('[+] There are any extracted faces in the memory')
-            return
-
-        for (i, image) in enumerate(face_arrays):
-            # Save image to storage datasets
-            cv2.imwrite('{}{}{}'.format(root_dirs[i], i + 1, '.jpg'), image)
-
-        for filename in filenames:
-            # Remove original filename
-            os.remove(filename)
+        # Return extracted faces
+        return faces
 
     @staticmethod
-    def computation(epochs = 32, batch_size = 32, required_size = (224, 224)):
-        """!
-            @fn     computation
-            @brief  Compute transfer learning process from pre-trained weights
+    def __load_datasets__(directory = str()):
+        """
+            @fn             __load_datasets__
+            @brief          Load dataset that contains one subdir for each class that in turn contains images
+                            and return faces and labels vectors
+
+            @param[in]      directory           Input directory of dataset
+            @return                             Faces and labels vectors
+        """
+        # Check if directory exists
+        if not os.path.isdir(directory):
+             assert False, 'Unknow directory : {}'.format(directory)
+
+        # Initialize entries
+        X, y = list(), list()
+
+        # Enumerate forlders, on per class
+        for subdir in os.listdir(directory):
+            # Define absolute path
+            path = directory + subdir + '/'
+
+            # Skip any files that might be in the dir
+            if not os.path.isdir(path):
+                # Go to the next step
+                continue
+
+            # Load all faces in the subdirectory
+            faces = net.__load_faces__(path)
+
+            # Create labels
+            labels = [subdir for _ in range(len(faces))]
+
+            # Store faces and labels
+            X.extend(faces)
+            y.extend(labels)
+        
+        # Return faces and labels
+        return np.asfarray(X), np.asarray(y)
+
+    @staticmethod
+    def save_datasets():
+        """
+            @fn             save_datasets
+            @brief          Save datasets that contains faces and labels for train and validation
+        """
+        # Load train dataset
+        X_train, y_train = net.__load_datasets__('datasets/train/')
+
+        # Load validation dataset
+        X_test, y_test = net.__load_datasets__('datasets/validation/')
+
+        # Save arrays to one file in compressed format
+        np.savez_compressed('datasets/mwoo_faces.npz', X_train, y_train, X_test, y_test)
+
+    @staticmethod
+    def load_data():
+        """
+            @fn             load_data
+            @brief          Load data from compressed format and return X_train, y_train, X_test and y_test vectors
+
+            @return         (X_train, y_train, X_test, y_test)
+        """
+        # Check if compressed file exists
+        if not os.path.isfile('datasets/mwoo_faces.npz'):
+            # Save datasets
+            net.save_datasets()
+
+        # Load the face data
+        data = np.load('datasets/mwoo_faces.npz')
+
+        # Return vectors
+        return data['arr_0'], data['arr_1'], data['arr_2'], data['arr_3']
+
+    @staticmethod
+    def __normalize_vectors__(X_train, X_test):
+        """
+            @fn             __normalize_vectors__
+            @brief          Normalize input vectors to unit norm and return normalized vectors
+
+            @param[in]      X_train             Input train vector
+            @param[in]      X_test              Input validation vector
+            @return                             (X_train, X_test)
+        """
+        # Return normalized vectors , divide by 255 so that everything is between 0 and 1 
+        return X_train / 255, X_test / 255
+
+    @staticmethod
+    def __transform_labels__(y_train, y_test):
+        """
+            @fn             __transform_labels__
+            @brief          Transform non-binary classes to a binary representation
+
+            @param[in]      y_train             Input train label
+            @param[in]      y_test              Input test label
+            @return                             (y_train, y_test)
+
+            For example, if we have a list of 6 flowers each can have one of 3 classes
+            Input : [
+                        1, 
+                        3,
+                        3,
+                        2,
+                        1,
+                        2
+                    ]
+                    
+            Output : [
+                        [1,0,0], # class 1 
+                        [0,0,1], # class 3
+                        [0,0,1], # class 3
+                        [0,1,0], # class 2
+                        [1,0,0], # class 1
+                        [0,1,0]  # class 2
+                    ]
+        """
+        # Concatenate labels
+        y = np.concatenate((y_train, y_test), axis = 0)
+
+        # Initialize LabelEncoder object
+        encoder = LabelEncoder()
+
+        # Make transformation [1,3,3,2,1,2] --> [0,2,2,1,0,1] 
+        y = encoder.fit_transform(y)
+
+        # Initialize OneHotEncoder
+        encoder = OneHotEncoder()
+
+        # Make transformation
+        y = encoder.fit_transform(y.reshape(-1, 1))
+
+        # Resplit train and test label
+        Y_train = y[0:len(y_train)]
+        Y_test = y[len(y_train):]
+
+        # Return labels
+        return Y_train.toarray(), Y_test.toarray()
+
+    @staticmethod
+    def __add_layers__(base_model, num_classes = int()):
+        """
+            @fn             __add_layers__
+            @brief          Add multiple layers in the base model in place of fully-connected layer
+
+            @param[in]      base_model      Base model
+            @param[in]      num_classes     Total number of classes in the model
+            @return                         Model to use
+        """
+        # Add a global spatial average pooling layer
+        x = base_model.output
+        x = Flatten()(x)
+
+        # Let's add a logistic layer -- let's say we have units classes
+        predictions = Dense(units = num_classes, activation = 'softmax')(x)
+
+        # Return predictions
+        return predictions
+
+    @staticmethod
+    def __create_model__(height = 224, width = 224, depth = 3, num_classes = int()):
+        """
+            @fn             __create_model__
+            @brief          create the base pre-trained model
+
+            @param[in]      height          Height of the shape
+            @param[in]      width           Width of the shape
+            @param[in]      depth           Depth of the shape
+            @param[in]      num_classes     Total number of classes in the model
+            @return                         Model to use
+        """
+        # Define input shape of image
+        input_shape = (height, width, depth)
+
+        # Load VGG-16 pre-trained on ImageNet and without the fully-connected layers
+        base_model = VGG16(include_top = False, 
+                weights = 'imagenet', 
+                input_tensor = None,
+                input_shape = input_shape,
+                classes = num_classes
+        )
+
+        # Only the new classifier is trained and the other layers are not re-trained.
+        for layer in base_model.layers:
+            layer.trainable = False
+
+        # Add layers
+        predictions = net.__add_layers__(base_model = base_model, num_classes = num_classes)
+
+        # Groups layers into an object with training and inference features
+        model = Model(inputs = base_model.input, outputs = predictions)
+
+        # Return model
+        return model
+
+    @staticmethod
+    def computation(epochs = 100, learning_rate = 0.01, momentum = 0.9):
+        """
+            @fn             computation
+            @brief          Compute transfer learning process from pre-trained weights
 
             @param[in]      epochs          Number of epochs
-            @param[in]      batch_size      Number of samples that will be propagated through the network.
-            @param[in]      required_size   Model size of the image
+            @param[in]      learning_rate   A Tensor, floating point value
+            @param[in]      momentum        Float hyperparameter >= 0 that accelerates gradient descent
         """
-        # Check if datasets folders exist
-        if os.path.isdir('datasets/train') and os.path.isdir('datasets/validation'):
-            # Set relative path of train sets
-            train_sets_dir = 'datasets/train'
+        # Load data
+        X_train, y_train, X_test, y_test = net.load_data()
 
-            # Set relative path of validation sets
-            validation_sets_dir = 'datasets/validation'
+        # Normalize input vectors
+        X_train, X_test = net.__normalize_vectors__(X_train, X_test)
 
-            # Set class number
-            num_classes = len(glob('datasets/train/*'))
+        # Transform labels
+        y_train_binary, y_test_binary = net.__transform_labels__(y_train, y_test)
 
-            # Set the transformation of each train image in the batch by a series of random translations, rotations, etc
-            train_datagen = ImageDataGenerator(featurewise_center = False,
-                                   featurewise_std_normalization = False,
-                                   rotation_range = 30,
-                                   width_shift_range = 0.4,
-                                   height_shift_range = 0.4,
-                                   shear_range = 0.15,
-                                   fill_mode = 'nearest',
-                                   zoom_range = 0.3,
-                                   horizontal_flip = True,
-                                   rescale = 1./255
-            )
+        # Define number of classes
+        num_classes = len(np.unique(y_train))
 
-            # Set the transformation of each validation image
-            validation_datagen = ImageDataGenerator(rescale=1./255)
+        # Define batch size
+        batch_size = len(X_train)
 
-            # Generate batches of tensor image data with real time data augmentation
-            train_generator = train_datagen.flow_from_directory(train_sets_dir,
-                                    target_size = required_size,
-                                    batch_size = batch_size,
-                                    class_mode = 'categorical',
-                                    shuffle = True
-            )
+        # Create model
+        model = net.__create_model__(num_classes = num_classes)
 
-            # Generate batches of tensor image data with real time data augmentation
-            validation_generator = validation_datagen.flow_from_directory(validation_sets_dir,
-                                    target_size = required_size,
-                                    batch_size = batch_size,
-                                    class_mode = 'categorical',
-                                    shuffle = True
-            )
+        # Prints a string summary of the network.
+        print(model.summary())
 
-            # Load base model
-            model = VGG16(input_shape = [224, 224] + [3],
-                                    weights = 'imagenet',
-                                    include_top = False
-            )
+        # Compile the new model
+        model.compile(optimizer = SGD(learning_rate = learning_rate, momentum = momentum),
+                                            loss = 'categorical_crossentropy',
+                                            metrics = ['accuracy']
+        )
 
-            # Lock training of pretrained weights
-            for layer in model.layers:
-                layer.trainable = False
+        # Define callbacks
+        callbacks = None
 
-            # Reshape the input data into a format suitable for the convolutional layers
-            x = Flatten()(model.output)
+        # Fit the model with batch gradient descent
+        H = model.fit(x = X_train, 
+                        y = y_train_binary, 
+                        batch_size = batch_size,
+                        epochs = epochs,
+                        callbacks = callbacks,
+                        verbose = True,
+                        # We pass some validation for
+                        # monitoring validation loss and metrics
+                        # at the end of each epoch
+                        validation_data = (X_test, y_test_binary)
+        )
 
-            # Group layers into an object with training and inference features
-            model = Model(inputs = model.input, 
-                                    outputs =  [
-                                                Dense(units = num_classes, activation ='softmax')(x)
-                                            ]
-            )
+        # Save trained model
+        model.save('models/mwoo_model.h5')
 
-            # Print a string summary of the network.
-            model.summary()
+        # Evaluate the model on the test data using `evaluate`
+        print("Evaluate on test data")
+        results = model.evaluate(X_test, y_test_binary, batch_size = batch_size)
+        print("val loss, val acc:", results)
 
-            # Configures the model for training
-            model.compile(optimizer = Adam(lr=0.001),
-                                    loss = 'categorical_crossentropy',
-                                    metrics = ['accuracy']
-            )
+        # Plot of Model Loss on Training and Validation Datasets
+        plt.plot(H.history['loss'], color = 'blue', label = 'train loss')
+        plt.plot(H.history['val_loss'], color = 'red', label = 'val loss')
+        plt.xlabel('epoch')
+        plt.ylabel('loss')
+        plt.legend()
+        plt.savefig('src/assets/pdf/epoch-loss.pdf')
+        plt.show()
+        plt.close()
 
-            # Set callbacks
-            callbacks = None
-
-            # Check if pre-trained model exists
-            if os.path.isfile('models/mwoo_model.h5'):
-                # Define ModelCheckPoint callback
-                checkpoint = ModelCheckpoint('models/mwoo_model.h5',
-                                        monitor = 'val_loss',
-                                        mode = 'min',
-                                        save_best_only = True,
-                                        verbose = 1
-                )
-
-                # Define EarlyStopping callback
-                earlystop = EarlyStopping(monitor = 'val_loss',
-                                        min_delta = 0,
-                                        patience = 3,
-                                        verbose = 1,
-                                        restore_best_weights = True
-                )
-
-                # Define ReduceLROnPlateau callback
-                reduce_lr = ReduceLROnPlateau(monitor = 'val_loss',
-                                        factor = 0.2,
-                                        patience = 3,
-                                        verbose = 1,
-                                        min_delta = 0.0001
-                )
-
-                # Update Callbacks
-                callbacks = [earlystop, checkpoint, reduce_lr]
-
-            # Trains the model on data generated batch-by-batch by a Python generator
-            H = model.fit(train_generator,
-                                    validation_data = validation_generator,
-                                    epochs = epochs,
-                                    callbacks = callbacks,
-                                    steps_per_epoch = len(train_generator),
-                                    validation_steps = len(validation_generator)
-            )
-
-            # Save trained model
-            model.save('models/mwoo_model.h5')
-
-            # Evaluate the model on a data generator
-            loss, acc = model.evaluate(train_generator, steps = len(train_generator))
-
-            print("The accuracy of train sets is : ", acc)
-            print(loss, acc)
-
-            # Evaluates the model on a data generator
-            loss, acc = model.evaluate(validation_generator, steps = len(validation_generator))
-
-            print("The accuracy of validation sets is :", acc)
-            print(loss, acc)
-
-            # Plot of Model Loss on Training and Validation Datasets
-            plt.plot(H.history['loss'], color = 'blue', label = 'train loss')
-            plt.plot(H.history['val_loss'], color = 'red', label = 'val loss')
-            plt.xlabel('epoch')
-            plt.ylabel('loss')
-            plt.legend()
-            plt.savefig('src/assets/pdf/epoch-loss.pdf')
-            plt.show()
-            plt.close()
-
-            # Plot of Model accuracy on Training and Validation Datasets
-            plt.plot(H.history['accuracy'], color = 'blue', label = 'train acc')
-            plt.plot(H.history['val_accuracy'], color = 'red', label = 'val acc')
-            plt.xlabel('epoch')
-            plt.ylabel('accuracy')
-            plt.legend()
-            plt.savefig('src/assets/pdf/epoch-accuracy.pdf')
-            plt.show()
-            plt.close()
-        else:
-            print('[+] There are any datasets')
-            pass
-
+        # Plot of Model accuracy on Training and Validation Datasets
+        plt.plot(H.history['accuracy'], color = 'blue', label = 'train acc')
+        plt.plot(H.history['val_accuracy'], color = 'red', label = 'val acc')
+        plt.xlabel('epoch')
+        plt.ylabel('accuracy')
+        plt.legend()
+        plt.savefig('src/assets/pdf/epoch-accuracy.pdf')
+        plt.show()
+        plt.close()

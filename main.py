@@ -100,7 +100,7 @@ class mwoo(object):
             @brief  Parse and interpret options.
         """
         try:
-            opts, args = getopt(sys.argv[1:], 'c:d:hi:m:uvr:', [ 'compile=', 'device=', 'help', 'image=', 'media=', 'url', 'version', 'rescale=' ])
+            opts, args = getopt(sys.argv[1:], 'c:d:hi:m:uvr', [ 'compile=', 'device=', 'help', 'image=', 'media=', 'url', 'version', 'rescale' ])
         except GetoptError as err:
             print(err)
 
@@ -112,7 +112,7 @@ class mwoo(object):
                 # Check if variable is an integer
                 if isinstance(int(a), int):
                     # Compute transfer learning process
-                    net.computation(int(a))
+                    net.computation(epochs = int(a))
                 else:
                      # Built-in assert statement to find errors
                     assert False, 'Invalid argument'
@@ -148,11 +148,9 @@ class mwoo(object):
                 mwoo.__version__()
             elif o in ('-r', '--rescale'):
                 # Check if given argument is a valid dataset directory
-                if os.path.isdir('datasets/' + a):
-                    root_dirs = glob.glob('datasets/' + a + '/*/')
-                    for root_dir in root_dirs:
-                        # Rescaling given dataset directory
-                        net.rescale_datasets(root_dir = root_dir)
+                if os.path.isdir('datasets/train/') and os.path.isdir('datasets/validation/'):
+                    # Rescaling and saving given dataset directory
+                    net.save_datasets()
                 else:
                     # Built-in assert statement to find errors
                     assert False, 'Invalid argument'

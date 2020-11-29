@@ -36,7 +36,7 @@ identify a person from a video frame ([SOURCE] must be a reachable streaming URL
 display the version of the software and exit
 .TP
 .B -r, --rescale
-rescaling given dataset to improve the quality of dataset (from [SOURCE] that could be train or validation)
+rescaling given dataset to improve the quality of dataset
 .SH EXAMPLES
 Some examples of common usage.
 .SH NOTES

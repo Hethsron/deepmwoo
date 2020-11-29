@@ -76,10 +76,13 @@ For development, before committing the changes on the `master` branch, it is nec
 
     **/__pycache__
     **/[Bb]in
+    **/[Dd]atasets/train
+    **/[Dd]atasets/validation
     **/[Dd]ocs
     **/[Ii]nclude
     **/[Ll]ib
     **/[Ll]ib64
+    **/[Mm]odels/mwoo_model.h5
     **/[Ss]hare
     **/[Ss]cripts
     **/env
