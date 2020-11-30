@@ -122,13 +122,13 @@ class net(object):
 
         try:
             # Resize pixels to the model size
-            image = Image.fromarray((face * 255).astype(np.uint8))
+            image = Image.fromarray((face).astype(np.uint8))
             image = image.resize(required_size)
         except TypeError as err:
             print(err)
 
         # Return face array
-        return np.asfarray(image)
+        return np.asarray(image)
 
     @staticmethod
     def __load_faces__(directory = str()):
@@ -204,7 +204,7 @@ class net(object):
             y.extend(labels)
         
         # Return faces and labels
-        return np.asfarray(X), np.asarray(y)
+        return np.asarray(X), np.asarray(y)
 
     @staticmethod
     def save_datasets():
