@@ -55,13 +55,12 @@
                 © 2020 ENSISA (UHA) - All rights reserved.
 """
 
-import numpy as np
 from keras.models import load_model
-from keras.preprocessing.image import img_to_array
 from mtcnn.mtcnn import MTCNN
 from .access import os
 from .shapes import cv4, cv2
 from .log import maker
+from .net import Image, LabelEncoder, net, np
 
 class hub(object):
     """!
@@ -89,13 +88,25 @@ class hub(object):
         # Create a VideoCapture object
         cap = cv2.VideoCapture(video_source)
 
-        # Define classifier model
-        classifier = None
+        # Define a model classifier
+        model = None
+
+        # Define label encoder
+        encoder = None
 
         # Check if pre-trained model exists
-        if os.path.isfile('models/mwoo_model.h5'):
-            # Update classifier model
-            classifier = load_model('models/mwoo_model.h5')
+        if os.path.isfile('models/mwoo_model.h5') and os.path.isfile('datasets/mwoo_faces.npz'):
+            # Load labels
+            _, y_train, _, _ = net.load_data()
+
+            # Load model classifier
+            model = load_model('models/mwoo_model.h5')
+
+            # Load label encoder
+            encoder = LabelEncoder()
+
+            # Fit label encoder
+            encoder.fit(y_train)
 
         # Check whether VideoCapture is initialized or not
         while (cap.isOpened()):
@@ -121,18 +132,43 @@ class hub(object):
                         people += 1
 
                         try:
-                            frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+                            frame = cv4.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
                             
                             # Extract the face
                             face_array = frame[y:y + height, x:x + width]
 
                             # Check if face array instance is not None
-                            if face_array is not None:
-                                # Convert face array instance to grayscale
-                                face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
-
+                            if type(face_array) is np.ndarray:
                                 # Resize face array instance to the model size
                                 face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+
+                                # Creates an image memory from an object exporting the array interface (using the buffer protocol)
+                                face_array = Image.fromarray(face_array, 'RGB')
+
+                                # Convert PIL image to Numpy array
+                                face_array = np.array(face_array)
+
+                                # Change dimension 224x224x3 into 1x224x224x3
+                                face_array = np.expand_dims(face_array, axis = 0)
+
+                                # Generates output predictions for the input samples.
+                                predictions = model.predict(face_array)
+
+                                # Find predictions class
+                                predictions_class = predictions.argmax(axis = -1)
+
+                                # Find class index
+                                index = predictions_class[0]
+
+                                # Get confidence
+                                confidence = predictions[0, index] * 100
+
+                                # Get predicted label name
+                                name = encoder.inverse_transform(predictions_class)
+
+                                # Display predicted name on the frame
+                                cv4.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
+                                cv2.putText(frame, str(name[0]), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0,255), 1)
                                 pass
                         except IndexError as err:
                             print(err)
@@ -168,13 +204,23 @@ class hub(object):
         # Create the detector, using default weights
         detector = MTCNN()
 
-        # Define classifier model
-        classifier = None
+         # Define a model classifier
+        model = None
+
+        # Define label encoder
+        encoder = None
 
         # Check if pre-trained model exists
-        if os.path.isfile('models/mwoo_model.h5'):
-            # Update model classifier
-            classifier = load_model('models/mwoo_model.h5')
+        if os.path.isfile('models/mwoo_model.h5') and os.path.isfile('datasets/mwoo_faces.npz'):
+            # Load labels
+            _, y_train, _, _ = net.load_data()
+
+            # Load model classifier
+            model = load_model('models/mwoo_model.h5')
+
+            # Fit label encoder
+            encoder = LabelEncoder()
+            encoder.fit(y_train)
 
         # Read an image with its default color
         frame = cv2.imread(image_source)
@@ -197,18 +243,43 @@ class hub(object):
                 people += 1
 
                 try:
-                    frame = cv4.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 255), 2)
+                    frame = cv4.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
 
                     # Extract the face
                     face_array = frame[y:y + height, x:x + width]
 
                     # Check if face_array is not None
-                    if face_array is not None:
-                        # Convert face array instance to grayscale
-                        face_array = cv2.cvtColor(face_array, cv2.COLOR_BGR2GRAY)
-
-                        # Rsize face array instance to the model size
+                    if type(face_array) is np.ndarray:
+                        # Resize face array instance to the model size
                         face_array = cv2.resize(face_array, (224, 224), cv2.INTER_AREA)
+
+                        # Creates an image memory from an object exporting the array interface (using the buffer protocol)
+                        face_array = Image.fromarray(face_array, 'RGB')
+
+                        # Convert PIL image to Numpy array
+                        face_array = np.array(face_array)
+
+                        # Change dimension 224x224x3 into 1x224x224x3
+                        face_array = np.expand_dims(face_array, axis = 0)
+
+                        # Generates output predictions for the input samples.
+                        predictions = model.predict(face_array)
+
+                        # Find predictions class
+                        predictions_class = predictions.argmax(axis = -1)
+
+                        # Find class index
+                        index = predictions_class[0]
+
+                        # Get confidence
+                        confidence = predictions[0, index] * 100
+
+                        # Get predicted label name
+                        name = encoder.inverse_transform(predictions_class)
+
+                        # Display predicted name on the frame
+                        cv4.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
+                        cv2.putText(frame, str(name[0]), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0,255), 1)
                         pass
                 except IndexError as err:
                     print(err)
