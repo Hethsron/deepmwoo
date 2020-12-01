@@ -57,6 +57,7 @@
 
 from keras.models import load_model
 from mtcnn.mtcnn import MTCNN
+from operator import gt
 from .access import os
 from .shapes import cv4, cv2
 from .log import maker
@@ -132,7 +133,7 @@ class hub(object):
                         people += 1
 
                         try:
-                            frame = cv4.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
+                            frame = cv2.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
                             
                             # Extract the face
                             face_array = frame[y:y + height, x:x + width]
@@ -163,14 +164,23 @@ class hub(object):
                                 # Get confidence
                                 confidence = predictions[0, index] * 100
 
-                                print(confidence)
+                                # Define name
+                                name = None
 
-                                # Get predicted label name
-                                name = encoder.inverse_transform(predictions_class)
+                                if gt(confidence, 70):
+                                    # Get predicted label name
+                                    name = encoder.inverse_transform(predictions_class)
+                                    name = name[0]
+                                else:
+                                    name = 'Unknown'
 
                                 # Display predicted name on the frame
-                                cv4.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
-                                cv2.putText(frame, str(name[0]), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0,255), 1)
+                                cv2.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
+                                cv2.putText(frame, str(name), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1)
+
+                                # Display predicted confidence on the frame
+                                cv4.rectangle(frame, (x - 22, y + width + 99), (x + width + 22, y + width + 66), (0, 0, 255), -1)
+                                cv2.putText(frame, 'cf.:' + str(confidence) + '%', (x, y + width + 96), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
                                 pass
                         except IndexError as err:
                             print(err)
@@ -178,8 +188,8 @@ class hub(object):
                         pass
 
                 # Returns frame with bounded box of legend
-                if people:
-                    frame = maker.legend(given_frame = frame, score_people = people)
+                # if people:
+                #     frame = maker.legend(given_frame = frame, score_people = people)
 
                 # Display result
                 cv2.imshow('',frame)
@@ -245,7 +255,7 @@ class hub(object):
                 people += 1
 
                 try:
-                    frame = cv4.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
+                    frame = cv2.rectangle(frame, (x - 20, y - 20), (x + width + 20, y + height + 20), (0, 0, 255), 1)
 
                     # Extract the face
                     face_array = frame[y:y + height, x:x + width]
@@ -276,14 +286,23 @@ class hub(object):
                         # Get confidence
                         confidence = predictions[0, index] * 100
 
-                        print(confidence)
+                         # Define name
+                        name = None
 
-                        # Get predicted label name
-                        name = encoder.inverse_transform(predictions_class)
+                        if gt(confidence, 70):
+                            # Get predicted label name
+                            name = encoder.inverse_transform(predictions_class)
+                            name = name[0]
+                        else:
+                            name = 'Unknown'
 
                         # Display predicted name on the frame
-                        cv4.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
-                        cv2.putText(frame, str(name[0]), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0,255), 1)
+                        cv2.rectangle(frame, (x - 22, y - 55), (x + width + 22, y - 22), (0, 0, 255), -1)
+                        cv2.putText(frame, str(name), (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255,255), 1)
+
+                        # Display predicted confidence on the frame
+                        cv4.rectangle(frame, (x - 22, y + width + 99), (x + width + 22, y + width + 66), (0, 0, 255), -1)
+                        cv2.putText(frame, 'cf.:' + str(confidence) + '%', (x, y + width + 96), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
                         pass
                 except IndexError as err:
                     print(err)
@@ -291,8 +310,8 @@ class hub(object):
                 pass
         
         # Returns frame with bounded box of legend
-        if people:
-            frame = maker.legend( given_frame = frame, score_people = people)
+        # if people:
+        #     frame = maker.legend( given_frame = frame, score_people = people)
 
         # Display result
         cv2.imshow('',frame)
