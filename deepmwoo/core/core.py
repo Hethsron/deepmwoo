@@ -163,6 +163,8 @@ class hub(object):
                                 # Get confidence
                                 confidence = predictions[0, index] * 100
 
+                                print(confidence)
+
                                 # Get predicted label name
                                 name = encoder.inverse_transform(predictions_class)
 
@@ -274,6 +276,8 @@ class hub(object):
                         # Get confidence
                         confidence = predictions[0, index] * 100
 
+                        print(confidence)
+
                         # Get predicted label name
                         name = encoder.inverse_transform(predictions_class)
 
@@ -295,3 +299,6 @@ class hub(object):
 
         # Check user interruptions
         cv2.waitKey(0)
+
+        # Release everything if job is finished
+        cv2.destroyAllWindows()
