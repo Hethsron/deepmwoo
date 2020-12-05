@@ -224,7 +224,7 @@ class net(object):
         np.savez_compressed('datasets/mwoo_faces.npz', X_train, y_train, X_test, y_test)
 
     @staticmethod
-    def __load_data__():
+    def load_data():
         """
             @fn             __load_data__
             @brief          Load data from compressed format and return X_train, y_train, X_test and y_test vectors
@@ -423,7 +423,7 @@ class net(object):
             @param[in]      momentum        Float hyperparameter >= 0 that accelerates gradient descent
         """
         # Load data
-        X_train, y_train, X_test, y_test = net.__load_data__()
+        X_train, y_train, X_test, y_test = net.load_data()
 
         # Normalize input vectors
         X_train, X_test = net.__normalize_vectors__(X_train, X_test)
