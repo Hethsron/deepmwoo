@@ -63,8 +63,10 @@ from keras.applications.vgg16 import VGG16
 from keras.layers import Dense, Flatten
 from keras.models import Model
 from keras.optimizers import SGD
+from keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from .access import re, os
+from .log import maker
 
 class net(object):
     """!
@@ -222,9 +224,9 @@ class net(object):
         np.savez_compressed('datasets/mwoo_faces.npz', X_train, y_train, X_test, y_test)
 
     @staticmethod
-    def load_data():
+    def __load_data__():
         """
-            @fn             load_data
+            @fn             __load_data__
             @brief          Load data from compressed format and return X_train, y_train, X_test and y_test vectors
 
             @return         (X_train, y_train, X_test, y_test)
@@ -361,6 +363,56 @@ class net(object):
         return model
 
     @staticmethod
+    def __generate_batches__(x_train = None, y_train = None, y_train_binary = None, y_test = None, batch_size = int()):
+        """
+            @fn             __generate_batches__
+            @brief          Generate and return batches of tensor image data with real-time data augmentation
+
+            @param[in]      x_train         Train sample data
+            @param[in]      y_train         Train labels
+            @param[in]      y_train_binary  Train labels transformed
+            @param[in]      y_test          validation labels
+            @return                         (X_batch, Y_batch)
+        """
+        # Set train data image generator
+        datagen = ImageDataGenerator(
+                    rescale = 1./255,
+                    featurewise_center = True,
+                    featurewise_std_normalization = True,
+                    rotation_range = 20,
+                    width_shift_range = 0.2,
+                    height_shift_range = 0.2,
+                    brightness_range = (0.0,1.0),
+                    horizontal_flip = True
+        )
+
+        # Fits the train data generator to train sample data
+        datagen.fit(x = x_train, augment = True)
+
+        # Takes train sample data & label arrays, generates batches of augmented data
+        X_train = list()
+        Y_train = list()
+
+        X_train.append(x_train)
+        Y_train.append(y_train_binary)
+
+        for x_batch, y_batch in datagen.flow(x = x_train, y = y_train, batch_size = batch_size):
+            X_train.append(x_batch)
+            y_batch_binary, _ = net.__transform_labels__(y_batch, y_test)
+            Y_train.append(y_batch_binary)
+            if len(X_train) >= 5:
+                # we need to break the loop by hand because
+                # the generator loops indefinitely
+                break
+        
+        # Join sequence of arrays
+        X_batch = np.concatenate(X_train)
+        y_batch = np.concatenate(Y_train)
+
+        # Returns batches of tensor images
+        return X_batch, y_batch
+
+    @staticmethod
     def computation(epochs = 100, learning_rate = 0.01, momentum = 0.9):
         """
             @fn             computation
@@ -371,7 +423,7 @@ class net(object):
             @param[in]      momentum        Float hyperparameter >= 0 that accelerates gradient descent
         """
         # Load data
-        X_train, y_train, X_test, y_test = net.load_data()
+        X_train, y_train, X_test, y_test = net.__load_data__()
 
         # Normalize input vectors
         X_train, X_test = net.__normalize_vectors__(X_train, X_test)
@@ -384,6 +436,15 @@ class net(object):
 
         # Define batch size
         batch_size = len(X_train)
+
+        # Generate batches of tensor image data with real-time data augmentation
+        X_batch, y_batch = net.__generate_batches__(
+                            x_train = X_train, 
+                            y_train = y_train,
+                            y_train_binary = y_train_binary,
+                            y_test = y_test,
+                            batch_size = batch_size
+        )
 
         # Create model
         model = net.__create_model__(num_classes = num_classes)
@@ -401,8 +462,8 @@ class net(object):
         callbacks = None
 
         # Fit the model with batch gradient descent
-        H = model.fit(x = X_train, 
-                        y = y_train_binary, 
+        H = model.fit(x = X_batch, 
+                        y = y_batch, 
                         batch_size = batch_size,
                         epochs = epochs,
                         callbacks = callbacks,

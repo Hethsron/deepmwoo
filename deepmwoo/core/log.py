@@ -56,7 +56,9 @@
 """
 
 from .shapes import cv2
+from hashlib import md5
 import pyshine as ps
+import pickle as pc
 
 class maker(object):
     """!
@@ -73,9 +75,8 @@ class maker(object):
 
             @param[in]      given_frame     Given frame
             @param[in]      number_people   Score of people
-            @return         Image
+            @return                         Image
         """
-
         # Store pixels values of image
         overlay = given_frame.copy()
         
@@ -90,3 +91,40 @@ class maker(object):
 
         # Returns image
         return overlay
+
+    @staticmethod
+    def hasChanged(filename = str()):
+        """!
+            @fn     hasChanged
+            @brief  Returns True if given filename have been changed, false otherwise
+
+            @param[in]      filename        Given filename
+            @return                         True if given filename have been changed, false otherwise
+        """
+        try:
+            # Read the pickled representation of an object from the open file object given in the constructor
+            l = pc.load(open(file = 'datasets/saved_checksum.p', mode = 'rb'))
+            pass
+        except IOError as err:
+            l = []
+            pass
+
+        # Load the dictionnary
+        database = dict(l)
+
+        # Generate MD5 checksum
+        checksum = md5(open(file = filename).read().encode('utf-8')).hexdigest()
+
+        # Check if database contains a checksum
+        if database.get(filename, None) != checksum:
+            # Load checksum
+            database[filename] = checksum
+
+            # Write the pickled representation of the object
+            pc.dump(database, open(file = 'datasets/saved_checksum.p', mode = 'wb'))
+
+            # Returns True while filename have been changed
+            return True
+        else:
+            # Returns False while filename have not been changed
+            return False
