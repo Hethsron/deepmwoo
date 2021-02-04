@@ -57,7 +57,19 @@ For developement, before running the application, you need to create your own vi
 4. Install requirements :
 
     ```console
-        $ pip3 install -r requirements
+        $ pip3 install -r requirements.txt
+    ```
+
+    On Raspberry Pi 3+ only, run :
+
+    ```console
+        $ pip3 install -r requirements.1.txt
+    ```
+
+    Note : If you are Python 3.9.1 or higher, probably you will have a problem to install tensorflow. So we recommand you to execute this following command :
+
+    ```console
+        $ python3 -m pip install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.9.0-py3-none-any.whl
     ```
 
 5. Run the application
@@ -82,7 +94,7 @@ For development, before committing the changes on the `master` branch, it is nec
     **/[Ii]nclude
     **/[Ll]ib
     **/[Ll]ib64
-    **/[Mm]odels/mwoo_model.h5
+    **/[Mm]odels/mwoo.h5
     **/[Ss]hare
     **/[Ss]cripts
     **/env
@@ -98,3 +110,7 @@ To commit your changes and push it on `master` branch to GitHub, it is necessary
 ## Contributing change
 
 Please read the [`CONTRIBUTING.md`](CONTRIBUTING.md) for details on how to contribute to this project.
+
+## Work Based In Research
+
+![Face Recognition Based on Convolutional Neural Network](CNN.pdf)
