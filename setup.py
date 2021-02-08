@@ -1,4 +1,4 @@
-# Copyright © 2020  Hethsron Jedaël BOUEYA
+# Copyright © 2020  Hethsron Jedaël BOUEYA and Yassine BENOMAR
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,11 @@ from setuptools import setup, find_packages
     @file       setup.py
     @details    Required file which exists in root of project directory
                 to build and distribute package
-
     @author     BOUEYA Hethsron Jedaël <hethsron-jedael.boueya@uha.fr>
                 BENOMAR Yassine <yassine.benomar@uha.fr>
     
     @version    0.0.1
     @date       October 23th, 2020
-
     @copyright  GPLv3+ : GNU GPL version 3 or later
                 Licencied Material - Property of Stimul’Activ®
                 © 2020 ENSISA (UHA) - All rights reserved.
