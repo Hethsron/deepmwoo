@@ -1,0 +1,13 @@
+**/__pycache__
+**/[Bb]in
+**/[Rr]es/mwoo.npz
+**/[Dd]ocs
+**/[Ii]nclude
+**/[Ll]ib
+**/[Ll]ib64
+**/[Mm]odels/mwoo.h5
+**/[Ss]hare
+**/[Ss]cripts
+**/env
+**/pyvenv.cfg
+**/.venv
